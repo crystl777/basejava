@@ -27,14 +27,10 @@ public class ArrayStorage {
 
 
     Resume get(String uuid) {
-        try {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].uuid.equals(uuid)) {
-                    return storage[i];
-                }
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                return storage[i];
             }
-        } catch (NullPointerException e) {
-            System.out.println("такого резюме не существует");
         }
         return null;
     }

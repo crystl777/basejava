@@ -10,30 +10,25 @@ public class ArrayStorage {
         for (int i = 0; i < size; i++) {
             storage[i] = null;
         }
+        size = 0;
     }
 
 
-    void save(Resume r) {
+    void save(Resume resume) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(r.uuid)) {
+            if (storage[i].uuid.equals(resume.uuid)) {
                 System.out.println("такое резюме уже существует");
                 return;
             }
         }
-        storage[size] = r;
+        storage[size] = resume;
         size++;
     }
 
 
     Resume get(String uuid) {
-/*
-решил обработать данное исключение здесь, а не пробрасывать его дальше, так как подумал
-что лучше тесты не будут крашиться, а просто выведут в консоль информацию об ошибке.
-хотя, наверно, более правильно было бы прокинуть экспешн дальше, либо вообще в данной
-задаче не обрабатывать исключение и оставить всё как было :)
- */
         try {
-            for (int i = 0; i < storage.length; i++) {
+            for (int i = 0; i < size; i++) {
                 if (storage[i].uuid.equals(uuid)) {
                     return storage[i];
                 }
@@ -61,12 +56,12 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        Resume[] all = new Resume[size];
+        Resume[] resumes = new Resume[size];
 
-        for (int i = 0; i < all.length; i++) {
-            all[i] = storage[i];
+        for (int i = 0; i < resumes.length; i++) {
+            resumes[i] = storage[i];
         }
-        return all;
+        return resumes;
     }
 
 

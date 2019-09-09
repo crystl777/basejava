@@ -1,32 +1,36 @@
+package com.urise.webapp.storage;
+
+import com.urise.webapp.model.Resume;
+
 import java.util.Arrays;
 
 /**
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10000];
+    private Resume[] storage = new Resume[10_000];
     private int size = 0;
-    private int indexOfDuplicate = 0;
+    private int indexResume = 0;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
 
-    void save(Resume resume) {
-        if (!duplicateResume(resume) && size < 10000) {
+    public void save(Resume resume) {
+        if (!duplicateResume(resume.getUuid()) && size < storage.length) {
             storage[size] = resume;
             System.out.println("резюме было добавлено в storage");
             size++;
-        } else if (size >= 10000) {
-            System.out.println("база данных переполнена");
+        } else {
+            System.out.println("резюме не было добавлено в storage");
         }
     }
 
-    void update(Resume resume) {
-        if (duplicateResume(resume)) {
-            storage[indexOfDuplicate] = resume;
+    public void update(Resume resume) {
+        if (duplicateResume(resume.getUuid())) {
+            storage[indexResume] = resume;
             System.out.println("резюме было заменено");
         } else {
             System.out.println("такого резюме не существует");
@@ -34,19 +38,19 @@ public class ArrayStorage {
     }
 
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         if (duplicateResume(uuid)) {
-            return storage[indexOfDuplicate];
+            return storage[indexResume];
         }
         System.out.println("такого резюме не существует");
         return null;
     }
 
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         if (duplicateResume(uuid)) {
-            System.arraycopy(storage, indexOfDuplicate + 1, storage,
-                    indexOfDuplicate, size - (indexOfDuplicate + 1));
+            System.arraycopy(storage, indexResume + 1, storage,
+                    indexResume, size - (indexResume + 1));
             storage[size - 1] = null;
             System.out.println("резюме удалено из storage");
             size--;
@@ -58,29 +62,16 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
-        Resume[] resumes = Arrays.copyOf(storage, size);
-        return resumes;
+    public Resume[] getAll() {
+        return Arrays.copyOf(storage, size);
     }
 
 
-    private boolean duplicateResume(Resume resume) {
+    public boolean duplicateResume(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(resume.uuid)) {
-                System.out.println("данное резюме " + resume.uuid + " уже существует");
-                indexOfDuplicate = i;
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    private boolean duplicateResume(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 System.out.println("данное резюме " + uuid + " уже существует");
-                indexOfDuplicate = i;
+                indexResume = i;
                 return true;
             }
         }
@@ -88,7 +79,7 @@ public class ArrayStorage {
     }
 
 
-    int size() {
+    public int size() {
         return size;
     }
 }

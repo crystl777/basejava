@@ -8,7 +8,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private Resume[] storage = new Resume[10_000];
+    private Resume[] storage = new Resume[3];
     private int size = 0;
     private int indexResume = 0;
 
@@ -19,17 +19,19 @@ public class ArrayStorage {
 
 
     public void save(Resume resume) {
-        if (!duplicateResume(resume.getUuid()) && size < storage.length) {
-            storage[size] = resume;
-            System.out.println("резюме было добавлено в storage");
-            size++;
+        if (size < storage.length) {
+            if (!findDuplicateResume(resume.getUuid())) {
+                storage[size] = resume;
+                System.out.println("резюме было добавлено в storage");
+                size++;
+            }
         } else {
-            System.out.println("резюме не было добавлено в storage");
+            System.out.println("storage заполнен полностью. резюме не было добавлено");
         }
     }
 
     public void update(Resume resume) {
-        if (duplicateResume(resume.getUuid())) {
+        if (findDuplicateResume(resume.getUuid())) {
             storage[indexResume] = resume;
             System.out.println("резюме было заменено");
         } else {
@@ -39,7 +41,7 @@ public class ArrayStorage {
 
 
     public Resume get(String uuid) {
-        if (duplicateResume(uuid)) {
+        if (findDuplicateResume(uuid)) {
             return storage[indexResume];
         }
         System.out.println("такого резюме не существует");
@@ -48,7 +50,7 @@ public class ArrayStorage {
 
 
     public void delete(String uuid) {
-        if (duplicateResume(uuid)) {
+        if (findDuplicateResume(uuid)) {
             System.arraycopy(storage, indexResume + 1, storage,
                     indexResume, size - (indexResume + 1));
             storage[size - 1] = null;
@@ -67,7 +69,7 @@ public class ArrayStorage {
     }
 
 
-    public boolean duplicateResume(String uuid) {
+    public boolean findDuplicateResume(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 System.out.println("данное резюме " + uuid + " уже существует");

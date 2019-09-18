@@ -19,24 +19,30 @@ public abstract class AbstractArrayStorage implements Storage {
         size = 0;
     }
 
-
-    public void update(Resume resume) {
-        if (getIndex(resume.getUuid()) < 0) {
-            System.out.println("такого резюме не существует");
-        } else {
-            storage[getIndex(resume.getUuid())] = resume;
-            System.out.println("резюме " + resume.getUuid() + " было обновлено");
+    public void save(Resume resume) {
+        if (!isExist(resume.getUuid()) && !isFull()) {
+            System.out.println("сохраняем новое резюме");
+            addResume(resume);
         }
     }
 
+    public void delete(String uuid) {
+        if (isExist(uuid)) {
+            deleteResume(storage[getIndex(uuid)]);
+        }
+    }
+
+    public void update(Resume resume) {
+        if (isExist(resume.getUuid())) {
+            addResume(resume);
+        }
+    }
 
     public Resume get(String uuid) {
-        int index = getIndex(uuid);
-        if (index == -1) {
-            System.out.println("такого резюме не существует");
-            return null;
+        if (isExist(uuid)) {
+            return storage[getIndex(uuid)];
         }
-        return storage[index];
+        return null;
     }
 
 
@@ -49,4 +55,27 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     protected abstract int getIndex(String uuid);
+
+
+    protected boolean isExist(String uuid) {
+        if (getIndex(uuid) >= 0) {
+            System.out.println("данное резюме " + uuid + " было найдено");
+            return true;
+        } else {
+            System.out.println("такого резюме не существует");
+            return false;
+        }
+    }
+
+    protected boolean isFull() {
+        if (size >= storage.length) {
+            System.out.println("storage заполнен полностью");
+            return true;
+        }
+        return false;
+    }
+
+    protected abstract void addResume(Resume resume);
+
+    protected abstract void deleteResume(Resume resume);
 }

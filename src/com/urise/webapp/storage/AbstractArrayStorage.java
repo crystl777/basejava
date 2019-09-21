@@ -20,26 +20,27 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume resume) {
-        if (!isExist(resume.getUuid()) && !isFull()) {
+        if (getIndex(resume.getUuid()) < 0 && !isFull()) {
             System.out.println("сохраняем новое резюме");
             addResume(resume);
         }
     }
 
     public void delete(String uuid) {
-        if (isExist(uuid)) {
-            deleteResume(storage[getIndex(uuid)]);
+        if (getIndex(uuid) > 0) {
+            deleteResume(storage[getIndex(uuid)].getUuid());
         }
     }
 
     public void update(Resume resume) {
-        if (isExist(resume.getUuid())) {
-            addResume(resume);
+        if (getIndex(resume.getUuid()) > 0) {
+            storage[getIndex(resume.getUuid())] = resume;
+            System.out.println("резюме было заменено");
         }
     }
 
     public Resume get(String uuid) {
-        if (isExist(uuid)) {
+        if (getIndex(uuid) > 0) {
             return storage[getIndex(uuid)];
         }
         return null;
@@ -56,17 +57,6 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract int getIndex(String uuid);
 
-
-    protected boolean isExist(String uuid) {
-        if (getIndex(uuid) >= 0) {
-            System.out.println("данное резюме " + uuid + " было найдено");
-            return true;
-        } else {
-            System.out.println("такого резюме не существует");
-            return false;
-        }
-    }
-
     protected boolean isFull() {
         if (size >= storage.length) {
             System.out.println("storage заполнен полностью");
@@ -77,5 +67,10 @@ public abstract class AbstractArrayStorage implements Storage {
 
     protected abstract void addResume(Resume resume);
 
-    protected abstract void deleteResume(Resume resume);
+    protected abstract void deleteResume(String uuid);
+
+    protected void saveResume (Resume resume, int index) {
+        storage[index] = resume;
+        size++;
+    }
 }

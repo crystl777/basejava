@@ -6,9 +6,9 @@ import java.util.Arrays;
 
 public abstract class AbstractArrayStorage implements Storage {
 
-    protected static final int STORAGE_LIMIT = 10_000;
-    protected Resume[] storage = new Resume[STORAGE_LIMIT];
-    protected int size = 0;
+    private static final int STORAGE_LIMIT = 10_000;
+    Resume[] storage = new Resume[STORAGE_LIMIT];
+    int size = 0;
     private int index = 0;
 
     public int size() {
@@ -47,17 +47,21 @@ public abstract class AbstractArrayStorage implements Storage {
 
     public void update(Resume resume) {
         index = getIndex(resume.getUuid());
-        if (index > 0) {
+        if (index >= 0) {
             storage[index] = resume;
             System.out.println("резюме было заменено");
+        } else {
+            System.out.println("резюме " + resume.getUuid() + " не было найдено. Обновление не возможно");
+
         }
     }
 
     public Resume get(String uuid) {
         index = getIndex(uuid);
-        if (index > 0) {
+        if (index >= 0) {
             return storage[index];
         }
+        System.out.println("резюме " + uuid + " не было найдено");
         return null;
     }
 
@@ -69,8 +73,6 @@ public abstract class AbstractArrayStorage implements Storage {
         return Arrays.copyOf(storage, size);
     }
 
-    protected abstract int getIndex(String uuid);
-
     private boolean isFull() {
         if (size >= storage.length) {
             System.out.println("storage заполнен полностью");
@@ -78,6 +80,9 @@ public abstract class AbstractArrayStorage implements Storage {
         }
         return false;
     }
+
+
+    protected abstract int getIndex(String uuid);
 
     protected abstract void addResume(Resume resume, int index);
 

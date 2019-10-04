@@ -1,5 +1,8 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.exception.ExistStorageException;
+import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
@@ -21,15 +24,14 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume resume) {
-        if (!isFull()) {
-            index = getIndex(resume.getUuid());
-            if (index < 0) {
-                addResume(resume, index);
-                size++;
-                System.out.println("резюме было добавлено в storage");
-            } else {
-                System.out.println("резме " + resume.getUuid() + " уже существует");
-            }
+        int index = getIndex(resume.getUuid());
+        if (index >= 0) {
+            throw new ExistStorageException(resume.getUuid());
+        } else if (size == STORAGE_LIMIT) {
+            throw new StorageException("storage переполнен", resume.getUuid());
+        } else {
+            addResume(resume, index);
+            size++;
         }
     }
 
@@ -41,7 +43,8 @@ public abstract class AbstractArrayStorage implements Storage {
             size--;
             System.out.println("резюме " + uuid + " было удалено");
         } else {
-            System.out.println("резюме " + uuid + " не было найдено");
+            throw new NotExistStorageException(uuid);
+
         }
     }
 
@@ -51,8 +54,7 @@ public abstract class AbstractArrayStorage implements Storage {
             storage[index] = resume;
             System.out.println("резюме было заменено");
         } else {
-            System.out.println("резюме " + resume.getUuid() + " не было найдено. Обновление не возможно");
-
+            throw new NotExistStorageException(resume.getUuid());
         }
     }
 
@@ -61,8 +63,7 @@ public abstract class AbstractArrayStorage implements Storage {
         if (index >= 0) {
             return storage[index];
         }
-        System.out.println("резюме " + uuid + " не было найдено");
-        return null;
+        throw new NotExistStorageException(uuid);
     }
 
     /**
@@ -72,15 +73,6 @@ public abstract class AbstractArrayStorage implements Storage {
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
-
-    private boolean isFull() {
-        if (size >= storage.length) {
-            System.out.println("storage заполнен полностью");
-            return true;
-        }
-        return false;
-    }
-
 
     protected abstract int getIndex(String uuid);
 

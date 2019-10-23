@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
+
     private List<Resume> storage = new ArrayList<>();
 
     public void clear() {
@@ -16,37 +17,28 @@ public class ListStorage extends AbstractStorage {
         return storage.toArray(new Resume[storage.size()]);
     }
 
-    protected void addResume(Resume resume) {
-        storage.add(resume);
+    protected int getIndex(String uuid) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (uuid.equals(storage.get(i).getUuid()))
+                return i;
+        }
+        return -1;
     }
 
-    protected void updateResume(Resume resume) {
-        int index = storage.indexOf(resume);
+    protected void addResume(Resume resume, int index) {
+        storage.add(resume);
+
+    }
+
+    protected void updateResume(Resume resume, int index) {
         storage.set(index, resume);
     }
 
-    protected void deleteResume(String uuid) {
-        storage.remove(getResume(uuid));
+    protected void deleteResume(int index) {
+        storage.remove(index);
     }
 
-    protected Resume getResume(String uuid) {
-        for (int i = 0; i < storage.size(); i++) {
-            if (uuid.equals(storage.get(i).getUuid()))
-                return storage.get(i);
-        }
-        return storage.get(-1);
-    }
-
-    public int size() {
-        return storage.size();
-    }
-
-    protected boolean isExist(String uuid) {
-        for (Resume resume : storage) {
-            if (uuid.equals(resume.getUuid())) {
-                return true;
-            }
-        }
-        return false;
+    protected Resume getResume(int index) {
+        return storage.get(index);
     }
 }

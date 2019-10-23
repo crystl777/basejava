@@ -6,34 +6,29 @@ import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
 
-    private int index = 0;
+    protected abstract void addResume(Resume resume);
 
-    protected int size = 0;
+    protected abstract void updateResume(Resume resume);
 
-    protected abstract int getIndex(String uuid);
+    protected abstract void deleteResume(String uuid);
 
-    protected abstract void addResume(Resume resume, int index);
+    protected abstract Resume getResume(String uuid);
 
-    protected abstract void updateResume(Resume resume, int index);
+    protected abstract boolean isExist(String uuid);
 
-    protected abstract void deleteResume(int index);
-
-    protected abstract Resume getResume(int index);
 
     public void save(Resume resume) {
-        index = getIndex(resume.getUuid());
-        if (index >= 0) {
+        if (isExist(resume.getUuid())) {
             throw new ExistStorageException(resume.getUuid());
         } else {
-            addResume(resume, index);
-            size++;
+            addResume(resume);
+            System.out.println("резюме было добавлено");
         }
     }
 
     public void update(Resume resume) {
-        index = getIndex(resume.getUuid());
-        if (index >= 0) {
-            updateResume(resume, index);
+        if (isExist(resume.getUuid())) {
+            updateResume(resume);
             System.out.println("резюме было заменено");
         } else {
             throw new NotExistStorageException(resume.getUuid());
@@ -41,10 +36,8 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public void delete(String uuid) {
-        index = getIndex(uuid);
-        if (index >= 0) {
-            deleteResume(index);
-            size--;
+        if (isExist(uuid)) {
+            deleteResume(uuid);
             System.out.println("резюме " + uuid + " было удалено");
         } else {
             throw new NotExistStorageException(uuid);
@@ -52,14 +45,10 @@ public abstract class AbstractStorage implements Storage {
     }
 
     public Resume get(String uuid) {
-        index = getIndex(uuid);
-        if (index >= 0) {
-            return getResume(index);
+        if (isExist(uuid)) {
+            return getResume(uuid);
+        } else {
+            throw new NotExistStorageException(uuid);
         }
-        throw new NotExistStorageException(uuid);
-    }
-
-    public int size() {
-        return size;
     }
 }

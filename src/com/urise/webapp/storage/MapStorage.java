@@ -3,13 +3,11 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
 
     private Map<String, Resume> map = new HashMap<>();
-    private Iterator<Map.Entry<String, Resume>> iter = map.entrySet().iterator();
 
     public void clear() {
         map.clear();

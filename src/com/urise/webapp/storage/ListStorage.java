@@ -7,6 +7,7 @@ import java.util.List;
 
 public class ListStorage extends AbstractStorage {
     private List<Resume> storage = new ArrayList<>();
+    private int index = 0;
 
     public void clear() {
         storage.clear();
@@ -21,7 +22,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     protected void updateResume(Resume resume) {
-        int index = storage.indexOf(resume);
         storage.set(index, resume);
     }
 
@@ -30,11 +30,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     protected Resume getResume(String uuid) {
-        for (int i = 0; i < storage.size(); i++) {
-            if (uuid.equals(storage.get(i).getUuid()))
-                return storage.get(i);
-        }
-        return storage.get(-1);
+        return storage.get(index);
     }
 
     public int size() {
@@ -42,8 +38,9 @@ public class ListStorage extends AbstractStorage {
     }
 
     protected boolean isExist(String uuid) {
-        for (Resume resume : storage) {
-            if (uuid.equals(resume.getUuid())) {
+        for (int i = 0; i < storage.size(); i++) {
+            if (uuid.equals(storage.get(i).getUuid())) {
+                index = i;
                 return true;
             }
         }

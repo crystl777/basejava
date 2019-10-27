@@ -9,11 +9,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected static final int STORAGE_LIMIT = 10_000;
     Resume[] storage = new Resume[STORAGE_LIMIT];
-    int index = 0;
 
     protected int size = 0;
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Integer getSearchKey(String uuid);
 
     protected abstract void saveResumeToStorage(Resume resume, int index);
 
@@ -33,21 +32,21 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return Arrays.copyOf(storage, size);
     }
 
-    protected void addResume(Resume resume) {
+    protected void addResume(Resume resume, Object index) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("storage переполнен", resume.getUuid());
         } else {
-            saveResumeToStorage(resume, index);
+            saveResumeToStorage(resume, (Integer) index);
             size++;
         }
     }
 
-    protected void updateResume(Resume resume) {
-        storage[index] = resume;
+    protected void updateResume(Resume resume, Object index) {
+        storage[(Integer)index] = resume;
     }
 
-    protected void deleteResume(String uuid) {
-        deleteResumeFromStorage(index);
+    protected void deleteResume(Object index) {
+        deleteResumeFromStorage((Integer) index);
         storage[size - 1] = null;
         size--;
     }
@@ -56,12 +55,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    protected Resume getResume(String uuid) {
-        return storage[index];
+    protected Resume getResume(Object index) {
+        return storage[(Integer) index];
     }
 
-    protected boolean isExist(String uuid) {
-        index = getIndex(uuid);
-        return index >= 0;
+    protected boolean isExist(Object index) {
+        return (Integer) index >= 0;
     }
 }

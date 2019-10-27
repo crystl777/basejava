@@ -17,24 +17,29 @@ public class MapStorage extends AbstractStorage {
         return map.values().toArray(new Resume[map.size()]);
     }
 
-    protected void addResume(Resume resume) {
+    protected void addResume(Resume resume, Object searchKey) {
         map.put(resume.getUuid(), resume);
     }
 
-    protected void updateResume(Resume resume) {
+    protected void updateResume(Resume resume, Object searchKey) {
         map.put(resume.getUuid(), resume);
     }
 
-    protected void deleteResume(String uuid) {
-        map.remove(uuid);
+    protected void deleteResume(Object searchKey) {
+        map.remove(searchKey.toString());
     }
 
-    protected Resume getResume(String uuid) {
-        return map.get(uuid);
+    protected Resume getResume(Object searchKey) {
+        return map.get(searchKey.toString());
     }
 
-    protected boolean isExist(String uuid) {
-        return map.containsKey(uuid);
+    protected boolean isExist(Object searchKey) {
+        return map.containsKey(searchKey.toString());
+    }
+
+    @Override
+    protected Object getSearchKey(String uuid) {
+        return uuid;
     }
 
     public int size() {

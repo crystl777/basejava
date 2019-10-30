@@ -4,6 +4,8 @@ import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
 
@@ -27,9 +29,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
      * @return array, contains only Resumes in storage (without null)
      */
 
-
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    public List<Resume> getAllSorted() {
+        List<Resume> list = Arrays.asList(Arrays.copyOf(storage, size));
+        Collections.sort(list);
+        return list;
     }
 
     protected void addResume(Resume resume, Object index) {
@@ -42,7 +45,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     protected void updateResume(Resume resume, Object index) {
-        storage[(Integer)index] = resume;
+        storage[(Integer) index] = resume;
     }
 
     protected void deleteResume(Object index) {

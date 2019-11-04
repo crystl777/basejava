@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static junit.framework.TestCase.assertEquals;
@@ -15,22 +16,20 @@ import static junit.framework.TestCase.assertEquals;
 public abstract class AbstractStorageTest {
     protected Storage storage;
 
+    private static final String UUID_1 = "uuid1";
+    private static final String UUID_2 = "uuid2";
+    private static final String UUID_3 = "uuid3";
+    private static final String UUID_4 = "uuid4";
+
+    private Resume resume1 = new Resume(UUID_1, "Bob");
+    private Resume resume2 = new Resume(UUID_2, "James");
+    private Resume resume3 = new Resume(UUID_3, "Christopher");
+    private Resume resume4 = new Resume(UUID_4, "Jason");
+
+
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
-
-    private static final String UUID_1 = "uuid1";
-    private static final String FULL_NAME_1 = "James";
-    private static final String UUID_2 = "uuid2";
-    private static final String FULL_NAME_2 = "Bob";
-    private static final String UUID_3 = "uuid3";
-    private static final String FULL_NAME_3 = "Elizabeth";
-    private static final String UUID_4 = "uuid4";
-    private static final String FULL_NAME_4 = "Harry";
-    private Resume resume1 = new Resume(UUID_1, FULL_NAME_1);
-    private Resume resume2 = new Resume(UUID_2, FULL_NAME_2);
-    private Resume resume3 = new Resume(UUID_3, FULL_NAME_3);
-    private Resume resume4 = new Resume(UUID_4, FULL_NAME_4);
 
     @Before
     public void setUp() throws Exception {
@@ -49,15 +48,15 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        List<Resume> list = new ArrayList<>(storage.getAllSorted());
-
-        Assert.assertEquals(3, list.size());
-
-        assertEquals(resume2, list.get(0));
-        assertEquals(resume3, list.get(1));
-        assertEquals(resume1, list.get(2));
+        List<Resume> list = storage.getAllSorted();
+        List<Resume> listWithSort = new ArrayList<>();
+        listWithSort.add(resume1);
+        listWithSort.add(resume2);
+        listWithSort.add(resume3);
+        Collections.sort(listWithSort);
+        assertEquals(3, list.size());
+        assertEquals(listWithSort, list);
     }
-
 
 
     @Test
@@ -67,8 +66,8 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(resume1);
-        Assert.assertEquals(UUID_1, resume1.getUuid());
+        storage.update(new Resume(UUID_1, "Bob"));
+        Assert.assertEquals(resume1, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)

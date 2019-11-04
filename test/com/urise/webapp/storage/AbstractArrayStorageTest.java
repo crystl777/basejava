@@ -8,6 +8,7 @@ import org.junit.Test;
 
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
 
+
     public AbstractArrayStorageTest(Storage storage) {
         super(storage);
     }
@@ -16,11 +17,11 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
     public void overflowExceptionGet() throws Exception {
         try {
             for (int i = storage.size(); i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
+                storage.save(new Resume("dummy"));
             }
         } catch (StorageException e) {
             Assert.fail("storage не заполнен до конца");
         }
-        storage.save(new Resume());
+        storage.save(new Resume("dummy"));
     }
 }

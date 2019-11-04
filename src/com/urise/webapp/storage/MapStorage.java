@@ -8,23 +8,37 @@ public class MapStorage extends AbstractStorage {
 
     private Map<String, Resume> map = new HashMap<>();
 
+    @Override
+    public void clear() {
+        map.clear();
+    }
 
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
     protected void addResume(Resume resume, Object searchKey) {
         map.put(resume.getUuid(), resume);
     }
 
+    @Override
     protected void updateResume(Resume resume, Object searchKey) {
         map.put(resume.getUuid(), resume);
     }
 
+    @Override
     protected void deleteResume(Object searchKey) {
         map.remove(searchKey.toString());
     }
 
+    @Override
     protected Resume getResume(Object searchKey) {
         return map.get(searchKey.toString());
     }
 
+    @Override
     protected boolean isExist(Object searchKey) {
         return map.containsKey(searchKey.toString());
     }
@@ -34,17 +48,8 @@ public class MapStorage extends AbstractStorage {
         return uuid;
     }
 
-    public void clear() {
-        map.clear();
-    }
-
-    public List<Resume> getAllSorted() {
-        List<Resume> list = new ArrayList<>(map.values());
-        Collections.sort(list);
-        return list;
-    }
-
-    public int size() {
-        return map.size();
+    @Override
+    protected List<Resume> getStorageList() {
+        return new ArrayList<>(map.values());
     }
 }

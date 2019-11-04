@@ -4,7 +4,6 @@ import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage {
@@ -20,21 +19,30 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected abstract void deleteResumeFromStorage(int index);
 
+    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-
+    /*
+    @Override
     public List<Resume> getAllSorted() {
         List<Resume> list = Arrays.asList(Arrays.copyOf(storage, size));
         Collections.sort(list);
         return list;
     }
 
+     */
+
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+
+    @Override
     protected void addResume(Resume resume, Object index) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("storage переполнен", resume.getUuid());
@@ -44,25 +52,31 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
+    @Override
     protected void updateResume(Resume resume, Object index) {
         storage[(Integer) index] = resume;
     }
 
+    @Override
     protected void deleteResume(Object index) {
         deleteResumeFromStorage((Integer) index);
         storage[size - 1] = null;
         size--;
     }
 
-    public int size() {
-        return size;
-    }
-
+    @Override
     protected Resume getResume(Object index) {
         return storage[(Integer) index];
     }
 
+    @Override
     protected boolean isExist(Object index) {
         return (Integer) index >= 0;
+    }
+
+
+    @Override
+    protected List<Resume> getStorageList() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 }

@@ -25,18 +25,18 @@ public class ResumeTestData {
         qualificationListSection.getListComponent().add("the second qualification");
         qualificationListSection.getListComponent().add("the third qualification");
 
-        InfoSection experience = new InfoSection("experience",
+        Organization experience = new Organization("experience", "google.com",
                 YearMonth.of(2013, 9), YearMonth.of(2016, 10),
                 "info text");
 
-        InfoSection education = new InfoSection("education",
+        Organization education = new Organization("education", "yandex.ru",
                 YearMonth.of(2016, 10), YearMonth.of(2019, 11),
                 "info text 2");
 
-        ListInfoSection listExperience = new ListInfoSection();
-        ListInfoSection listEducation = new ListInfoSection();
-        listExperience.getInfoComponent().add(experience);
-        listEducation.getInfoComponent().add(education);
+        OrganizationSection listExperience = new OrganizationSection();
+        OrganizationSection listEducation = new OrganizationSection();
+        listExperience.getOrganizationList().add(experience);
+        listEducation.getOrganizationList().add(education);
 
 
         resume.getContacts().put(ContactType.PHONE_NUMBER, "+7-999-000-11-22");
@@ -54,6 +54,9 @@ public class ResumeTestData {
         resume.getSections().put(SectionType.EXPERIENCE, listExperience);
         resume.getSections().put(SectionType.EDUCATION, listEducation);
 
+
+        System.out.println(resume.getUuid());
+        System.out.println(resume.getFullName());
 
         System.out.println(ContactType.PHONE_NUMBER.getTitle() + " "
                 + resume.getContacts().get(ContactType.PHONE_NUMBER));

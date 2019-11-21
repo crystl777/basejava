@@ -3,7 +3,9 @@ package com.urise.webapp.model;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
-import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -13,8 +15,9 @@ public class Resume implements Comparable<Resume> {
 
     private String fullName;
     private final String uuid;  // Unique identifier
-    private HashMap<ContactType, String> contacts = new HashMap<>();
-    private HashMap<SectionType, AbstractSection> sections = new HashMap<>();
+
+    private Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    private Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
@@ -34,11 +37,11 @@ public class Resume implements Comparable<Resume> {
         return uuid;
     }
 
-    public HashMap<ContactType, String> getContacts() {
+    public Map<ContactType, String> getContacts() {
         return contacts;
     }
 
-    public HashMap<SectionType, AbstractSection> getSections() {
+    public Map<SectionType, AbstractSection> getSections() {
         return sections;
     }
 
@@ -46,18 +49,16 @@ public class Resume implements Comparable<Resume> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Resume resume = (Resume) o;
-
-        if (!uuid.equals(resume.uuid)) return false;
-        return fullName.equals(resume.fullName);
+        return Objects.equals(fullName, resume.fullName) &&
+                uuid.equals(resume.uuid) &&
+                Objects.equals(contacts, resume.contacts) &&
+                Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        int result = uuid.hashCode();
-        result = 31 * result + fullName.hashCode();
-        return result;
+        return Objects.hash(fullName, uuid, contacts, sections);
     }
 
     @Override

@@ -5,6 +5,8 @@ import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResumeTestData {
 
@@ -15,28 +17,42 @@ public class ResumeTestData {
         StringSection personalStringSection = new StringSection("personal text");
         StringSection objectiveStringSection = new StringSection("objective text");
 
-        ListSection achievementListSection = new ListSection();
-        achievementListSection.getListComponent().add("the first achievement");
-        achievementListSection.getListComponent().add("the second achievement");
-        achievementListSection.getListComponent().add("the third achievement");
 
-        ListSection qualificationListSection = new ListSection();
-        qualificationListSection.getListComponent().add("the first qualification");
-        qualificationListSection.getListComponent().add("the second qualification");
-        qualificationListSection.getListComponent().add("the third qualification");
+        List<String> achievements = new ArrayList<>();
+        achievements.add("the first achievement");
+        achievements.add("the second achievement");
+        achievements.add("the third achievement");
+        ListSection achievementListSection = new ListSection(achievements);
 
-        Organization experience = new Organization("experience", "google.com",
+
+        List<String> qualifications = new ArrayList<>();
+        qualifications.add("the first qualification");
+        qualifications.add("the second qualification");
+        qualifications.add("the third qualification");
+        ListSection qualificationListSection = new ListSection(qualifications);
+
+
+        Link webLink1 = new Link("google", "google.com");
+        Link webLink2 = new Link("yandex", "yandex.ru");
+
+        Organization experience = new Organization("experience", webLink1,
                 YearMonth.of(2013, 9), YearMonth.of(2016, 10),
                 "info text");
 
-        Organization education = new Organization("education", "yandex.ru",
+        Organization education = new Organization("education", webLink2,
                 YearMonth.of(2016, 10), YearMonth.of(2019, 11),
                 "info text 2");
 
-        OrganizationSection listExperience = new OrganizationSection();
-        OrganizationSection listEducation = new OrganizationSection();
-        listExperience.getOrganizationList().add(experience);
-        listEducation.getOrganizationList().add(education);
+
+        List<Organization> experienceComponents = new ArrayList<>();
+        experienceComponents.add(experience);
+        List<Organization> educationComponents = new ArrayList<>();
+        educationComponents.add(education);
+
+        OrganizationSection listExperience = new OrganizationSection(experienceComponents);
+        OrganizationSection listEducation = new OrganizationSection(educationComponents);
+       // listExperience.getOrganizationList().add(experience);
+        // listEducation.getOrganizationList().add(education);
 
 
         resume.getContacts().put(ContactType.PHONE_NUMBER, "+7-999-000-11-22");

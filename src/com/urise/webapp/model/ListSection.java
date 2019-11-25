@@ -1,12 +1,16 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends AbstractSection {
 
-    private List<String> listComponent = new ArrayList<>();
+    private final List<String> listComponent;
+
+    public ListSection(List<String> listComponent) {
+        Objects.requireNonNull(listComponent, "items must not be null");
+        this.listComponent = listComponent;
+    }
 
     public List<String> getListComponent() {
         return listComponent;

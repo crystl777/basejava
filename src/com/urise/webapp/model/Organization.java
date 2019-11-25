@@ -5,41 +5,26 @@ import java.util.Objects;
 
 public class Organization {
 
-    private String title;
-    private String webLink;
-    private YearMonth dataStart;
-    private YearMonth dataEnd;
-    private String text;
+    private final String title;
+    private final Link homePage;
+    private final YearMonth dataStart;
+    private final YearMonth dataEnd;
+    private final String text;
 
-    public Organization(String title, String webLink, YearMonth dataStart, YearMonth dataEnd, String text) {
+    public Organization(String title, Link homePage, YearMonth dataStart, YearMonth dataEnd, String text) {
+        Objects.requireNonNull(title, "title must not be null");
+        Objects.requireNonNull(dataStart, "dataStart must not be null");
+        Objects.requireNonNull(dataEnd, "dataEnd must not be null");
         this.title = title;
-        this.webLink = webLink;
+        this.homePage = homePage;
         this.dataStart = dataStart;
         this.dataEnd = dataEnd;
-        this.text = text;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setWebLink(String webLink) { this.webLink = webLink; }
-
-    public void setDataStart(YearMonth dataStart) {
-        this.dataStart = dataStart;
-    }
-
-    public void setDataEnd(YearMonth dataEnd) {
-        this.dataEnd = dataEnd;
-    }
-
-    public void setText(String text) {
         this.text = text;
     }
 
     public String getTitle() { return title; }
 
-    public String getWebLink() { return webLink; }
+    public Link getHomePage() { return homePage; }
 
     public YearMonth getDataStart() { return dataStart; }
 
@@ -51,26 +36,34 @@ public class Organization {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Organization that = (Organization) o;
-        return Objects.equals(title, that.title) &&
-                Objects.equals(webLink, that.webLink) &&
-                Objects.equals(dataStart, that.dataStart) &&
-                Objects.equals(dataEnd, that.dataEnd) &&
-                Objects.equals(text, that.text);
+
+        if (!homePage.equals(that.homePage)) return false;
+        if (!dataStart.equals(that.dataStart)) return false;
+        if (!dataEnd.equals(that.dataEnd)) return false;
+        if (!title.equals(that.title)) return false;
+        return Objects.equals(text, that.text);
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, webLink, dataStart, dataEnd, text);
+        int result = homePage.hashCode();
+        result = 31 * result + dataStart.hashCode();
+        result = 31 * result + dataEnd.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + (text != null ? text.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString() {
         return "Organization{" +
-                "title='" + title + '\'' +
-                ", webLink='" + webLink + '\'' +
+                "homePage=" + homePage +
                 ", dataStart=" + dataStart +
                 ", dataEnd=" + dataEnd +
+                ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
                 '}';
     }

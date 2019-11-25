@@ -13,17 +13,19 @@ import java.util.UUID;
  */
 public class Resume implements Comparable<Resume> {
 
-    private String fullName;
+    private final String fullName;
     private final String uuid;  // Unique identifier
 
-    private Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
-    private Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
+    private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
     }
 
     public Resume(String uuid, String fullName) {
+        Objects.requireNonNull(uuid, "uuid must not be null");
+        Objects.requireNonNull(fullName, "fullName must not be null");
         this.uuid = uuid;
         this.fullName = fullName;
     }
@@ -49,16 +51,18 @@ public class Resume implements Comparable<Resume> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+
         Resume resume = (Resume) o;
-        return Objects.equals(fullName, resume.fullName) &&
-                uuid.equals(resume.uuid) &&
-                Objects.equals(contacts, resume.contacts) &&
-                Objects.equals(sections, resume.sections);
+
+        if (!uuid.equals(resume.uuid)) return false;
+        return fullName.equals(resume.fullName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullName, uuid, contacts, sections);
+        int result = uuid.hashCode();
+        result = 31 * result + fullName.hashCode();
+        return result;
     }
 
     @Override

@@ -4,7 +4,6 @@ import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,16 +31,21 @@ public class ResumeTestData {
         ListSection qualificationListSection = new ListSection(qualifications);
 
 
-        Link webLink1 = new Link("google", "google.com");
-        Link webLink2 = new Link("yandex", "yandex.ru");
+        OrganizationDate dateExperience1 = new OrganizationDate(2016, 9, 2017, 12);
+        OrganizationDate dateExperience2 = new OrganizationDate(2018, 3, 2019, 10);
+        List<OrganizationDate> listDateExperience = new ArrayList<>();
+        listDateExperience.add(dateExperience1);
+        listDateExperience.add(dateExperience2);
 
-        Organization experience = new Organization("experience", webLink1,
-                YearMonth.of(2013, 9), YearMonth.of(2016, 10),
-                "info text");
+        OrganizationDate dateEducation1 = new OrganizationDate(1998, 9, 2001, 6);
+        List<OrganizationDate> listDateEducation = new ArrayList<>();
+        listDateEducation.add(dateEducation1);
 
-        Organization education = new Organization("education", webLink2,
-                YearMonth.of(2016, 10), YearMonth.of(2019, 11),
-                "info text 2");
+        Organization experience = new Organization("google", "google.com", listDateExperience,
+                "experience", "info text");
+
+        Organization education = new Organization("yandex", "yandex.ru", listDateEducation,
+                "education", "info text 2");
 
 
         List<Organization> experienceComponents = new ArrayList<>();
@@ -51,9 +55,6 @@ public class ResumeTestData {
 
         OrganizationSection listExperience = new OrganizationSection(experienceComponents);
         OrganizationSection listEducation = new OrganizationSection(educationComponents);
-       // listExperience.getOrganizationList().add(experience);
-        // listEducation.getOrganizationList().add(education);
-
 
         resume.getContacts().put(ContactType.PHONE_NUMBER, "+7-999-000-11-22");
         resume.getContacts().put(ContactType.SKYPE, "zzz");
@@ -114,5 +115,6 @@ public class ResumeTestData {
 
         System.out.println(SectionType.EDUCATION.getTitle() + " "
                 + resume.getSections().get(SectionType.EDUCATION));
+
     }
 }

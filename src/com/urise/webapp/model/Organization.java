@@ -1,34 +1,30 @@
 package com.urise.webapp.model;
 
-import java.time.YearMonth;
+import java.util.List;
 import java.util.Objects;
 
 public class Organization {
 
-    private final String title;
     private final Link homePage;
-    private final YearMonth dataStart;
-    private final YearMonth dataEnd;
+    private List<OrganizationDate> dateList;
+    private final String title;
     private final String text;
 
-    public Organization(String title, Link homePage, YearMonth dataStart, YearMonth dataEnd, String text) {
+
+    public Organization(String name, String url, List<OrganizationDate> dateList, String title, String text) {
+        Objects.requireNonNull(dateList, "dateList must not be null");
         Objects.requireNonNull(title, "title must not be null");
-        Objects.requireNonNull(dataStart, "dataStart must not be null");
-        Objects.requireNonNull(dataEnd, "dataEnd must not be null");
+        this.homePage = new Link(name, url);
+        this.dateList = dateList;
         this.title = title;
-        this.homePage = homePage;
-        this.dataStart = dataStart;
-        this.dataEnd = dataEnd;
         this.text = text;
     }
 
-    public String getTitle() { return title; }
-
     public Link getHomePage() { return homePage; }
 
-    public YearMonth getDataStart() { return dataStart; }
+    public List<OrganizationDate> getDateList() { return dateList; }
 
-    public YearMonth getDataEnd() { return dataEnd; }
+    public String getTitle() { return title; }
 
     public String getText() { return text; }
 
@@ -36,33 +32,27 @@ public class Organization {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Organization that = (Organization) o;
-
-        if (!homePage.equals(that.homePage)) return false;
-        if (!dataStart.equals(that.dataStart)) return false;
-        if (!dataEnd.equals(that.dataEnd)) return false;
-        if (!title.equals(that.title)) return false;
-        return Objects.equals(text, that.text);
-
+        return Objects.equals(homePage, that.homePage) &&
+                dateList.equals(that.dateList) &&
+                title.equals(that.title) &&
+                Objects.equals(text, that.text);
     }
 
     @Override
     public int hashCode() {
-        int result = homePage.hashCode();
-        result = 31 * result + dataStart.hashCode();
-        result = 31 * result + dataEnd.hashCode();
-        result = 31 * result + title.hashCode();
-        result = 31 * result + (text != null ? text.hashCode() : 0);
-        return result;
+        return Objects.hash(homePage, dateList, title, text);
     }
 
     @Override
     public String toString() {
+        StringBuilder date = new StringBuilder("");
+        for (int i = 0; i < dateList.size(); i++) {
+            date.append(dateList.get(i).toString());
+        }
         return "Organization{" +
                 "homePage=" + homePage +
-                ", dataStart=" + dataStart +
-                ", dataEnd=" + dataEnd +
+                date.toString() +
                 ", title='" + title + '\'' +
                 ", text='" + text + '\'' +
                 '}';

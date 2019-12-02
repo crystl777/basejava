@@ -1,32 +1,29 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.DateUtil;
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+
 public class Organization {
-
     private final Link homePage;
-    private List<OrganizationDate> dateList;
-    private final String title;
-    private final String text;
+    private List<Position> positions;
 
 
-    public Organization(String name, String url, List<OrganizationDate> dateList, String title, String text) {
-        Objects.requireNonNull(dateList, "dateList must not be null");
-        Objects.requireNonNull(title, "title must not be null");
-        this.homePage = new Link(name, url);
-        this.dateList = dateList;
-        this.title = title;
-        this.text = text;
+
+    public Organization(String name, String url, Position... positions) {
+        this(new Link(name, url), Arrays.asList(positions));
     }
 
-    public Link getHomePage() { return homePage; }
+    public Organization(Link homePage, List<Position> positions) {
+        this.homePage = homePage;
+        this.positions = positions;
+    }
 
-    public List<OrganizationDate> getDateList() { return dateList; }
-
-    public String getTitle() { return title; }
-
-    public String getText() { return text; }
 
     @Override
     public boolean equals(Object o) {
@@ -34,27 +31,80 @@ public class Organization {
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
         return Objects.equals(homePage, that.homePage) &&
-                dateList.equals(that.dateList) &&
-                title.equals(that.title) &&
-                Objects.equals(text, that.text);
+                Objects.equals(positions, that.positions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(homePage, dateList, title, text);
+        return Objects.hash(homePage, positions);
     }
 
     @Override
     public String toString() {
-        StringBuilder date = new StringBuilder("");
-        for (int i = 0; i < dateList.size(); i++) {
-            date.append(dateList.get(i).toString());
+        return "Organization(" + homePage + "," + positions + ')';
+    }
+
+
+    public static class Position {
+        private final LocalDate dateStart;
+        private final LocalDate dateEnd;
+        private final String title;
+        private final String description;
+
+        public Position(int startYear, Month startMonth, String title, String description) {
+            this(DateUtil.of(startYear, startMonth), LocalDate.now(), title, description);
         }
-        return "Organization{" +
-                "homePage=" + homePage +
-                date.toString() +
-                ", title='" + title + '\'' +
-                ", text='" + text + '\'' +
-                '}';
+
+        public Position(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
+            this(DateUtil.of(startYear, startMonth), DateUtil.of(endYear, endMonth), title, description);
+        }
+
+
+        public Position(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
+            Objects.requireNonNull(dateStart, "dateStart must not be null");
+            Objects.requireNonNull(dateEnd, "dateEnd must not be null");
+            Objects.requireNonNull(title, "title must not be null");
+            this.dateStart = dateStart;
+            this.dateEnd = dateEnd;
+            this.title = title;
+            this.description = description;
+        }
+
+        public LocalDate getStartDate() {
+            return dateStart;
+        }
+
+        public LocalDate getEndDate() {
+            return dateEnd;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Position position = (Position) o;
+            return Objects.equals(dateEnd, position.dateStart) &&
+                    Objects.equals(dateEnd, position.dateStart) &&
+                    Objects.equals(title, position.title) &&
+                    Objects.equals(description, position.description);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(dateStart, dateEnd, title, description);
+        }
+
+        @Override
+        public String toString() {
+            return "Position(" + dateStart + ',' + dateEnd + ',' + title + ',' + description + ')';
+        }
     }
 }

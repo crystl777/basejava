@@ -32,23 +32,24 @@ public class MainFile {
 
         //рекурсивный обход всех файлов и подкаталогов внутри заданного каталога
         try {
-            recursiveBypass(dir);
+            printDirectoryDeeply(dir);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
         //метод для рекурсивного обхода файлов и каталогов
-    private static void recursiveBypass(File dir) throws IOException {
-        File[] files = dir.listFiles();
-
-        for (File file : files) {
-            if (file.isFile()) {
-                System.out.println(file.getPath());
-            } else {
-                recursiveBypass(file);
+        private static void printDirectoryDeeply(File dir) throws IOException {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        System.out.println(file.getPath());
+                    } else {
+                        printDirectoryDeeply(file);
+                    }
+                }
+                System.out.println(dir.getPath());
             }
         }
-        System.out.println(dir.getPath());
-    }
 }

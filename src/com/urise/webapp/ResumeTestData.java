@@ -4,6 +4,7 @@ import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,21 +32,21 @@ public class ResumeTestData {
         ListSection qualificationListSection = new ListSection(qualifications);
 
 
-        OrganizationDate dateExperience1 = new OrganizationDate(2016, 9, 2017, 12);
-        OrganizationDate dateExperience2 = new OrganizationDate(2018, 3, 2019, 10);
-        List<OrganizationDate> listDateExperience = new ArrayList<>();
-        listDateExperience.add(dateExperience1);
-        listDateExperience.add(dateExperience2);
+        List<Organization.Position> listPositionExperience = new ArrayList<>();
+        listPositionExperience.add(
+                new Organization.Position(LocalDate.of(1987, 9, 1),
+                        LocalDate.of(1993, 7, 1),
+                        "title experience", "description experience"));
 
-        OrganizationDate dateEducation1 = new OrganizationDate(1998, 9, 2001, 6);
-        List<OrganizationDate> listDateEducation = new ArrayList<>();
-        listDateEducation.add(dateEducation1);
+        List<Organization.Position> listPositionEducation = new ArrayList<>();
+        listPositionEducation.add(
+                new Organization.Position(LocalDate.of(2009, 12, 2),
+                        LocalDate.of(2014, 5, 5),
+                        "title education", "description education"));
 
-        Organization experience = new Organization("google", "google.com", listDateExperience,
-                "experience", "info text");
 
-        Organization education = new Organization("yandex", "yandex.ru", listDateEducation,
-                "education", "info text 2");
+       Organization experience = new Organization(new Link("google", "google.com"), listPositionExperience);
+       Organization education = new Organization(new Link("yandex", "yandex.ru"), listPositionEducation);
 
 
         List<Organization> experienceComponents = new ArrayList<>();

@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class AbstractFileStorage extends AbstractStorage<File> {
     private File directory;
+    private SerializationStrategy serializationStrategy;
 
-    protected AbstractFileStorage(File directory) {
+
+    protected AbstractFileStorage(File directory, SerializationStrategy serializationStrategy) {
+        this.serializationStrategy = serializationStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -56,7 +59,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void updateResume(Resume resume, File file) {
         try {
-            writeResume(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            serializationStrategy.writeResume(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", resume.getUuid(), e);
         }
@@ -72,7 +75,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume getResume(File file) {
         try {
-            return readResume(new BufferedInputStream(new FileInputStream(file)));
+            return serializationStrategy.readResume(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("IO error", file.getName(), e);
         }
@@ -103,8 +106,4 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             throw new StorageException("directory is null", directory.getName(), e);
         }
     }
-
-    protected abstract void writeResume(Resume resume, OutputStream os) throws IOException;
-
-    protected abstract Resume readResume(InputStream is) throws IOException;
 }

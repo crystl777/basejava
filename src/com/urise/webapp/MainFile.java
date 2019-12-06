@@ -50,6 +50,7 @@ public class MainFile {
     }
 
 
+    //рекурсивный вывод каталогов и файлов с отступами
     public static void printDirectoryDeeply(String dirName, int depth) {
         File dir = new File(dirName);
         if (!dir.isDirectory()) {

@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class AbstractPathStorage extends AbstractStorage<Path> {
     private Path directory;
+    private SerializationStrategy serializationStrategy;
 
-    protected AbstractPathStorage(String dir) {
+
+    protected AbstractPathStorage(String dir, SerializationStrategy serializationStrategy) {
+        this.serializationStrategy = serializationStrategy;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
@@ -54,7 +57,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected void updateResume(Resume resume, Path path) {
         try {
-            writeResume(resume, new BufferedOutputStream(new FileOutputStream(path.toString())));
+            serializationStrategy.writeResume(resume, new BufferedOutputStream(new FileOutputStream(path.toString())));
         } catch (IOException e) {
             throw new StorageException("File write error", path.toString(), e);
         }
@@ -74,7 +77,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume getResume(Path path) {
         try {
-            return readResume(new BufferedInputStream(new FileInputStream(path.toString())));
+            return serializationStrategy.readResume(new BufferedInputStream(new FileInputStream(path.toString())));
         } catch (IOException e) {
             throw new StorageException("IO error", path.toString(), e);
         }
@@ -105,8 +108,4 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
             throw new StorageException("directory is null", directory.toString(), e);
         }
     }
-
-    protected abstract void writeResume(Resume resume, OutputStream os) throws IOException;
-
-    protected abstract Resume readResume(InputStream is) throws IOException;
 }

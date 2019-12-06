@@ -3,6 +3,7 @@ package com.urise.webapp.model;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
+import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
@@ -11,8 +12,9 @@ import java.util.UUID;
 /**
  * Initial resume class
  */
-public class Resume implements Comparable<Resume> {
+public class Resume implements Comparable<Resume>, Serializable {
 
+    private static final long SERIAL_VERSION_UID = 1L;
     private final String fullName;
     private final String uuid;  // Unique identifier
 

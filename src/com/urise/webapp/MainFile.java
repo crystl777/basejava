@@ -30,26 +30,41 @@ public class MainFile {
             throw new RuntimeException(e);
         }
 
-        //рекурсивный обход всех файлов и подкаталогов внутри заданного каталога
-        try {
-            printDirectoryDeeply(dir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        printDirectoryDeeply("./src/com/urise/webapp", recursionDepth(dir));
     }
 
-        //метод для рекурсивного обхода файлов и каталогов
-        private static void printDirectoryDeeply(File dir) throws IOException {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile()) {
-                        System.out.println(file.getPath());
-                    } else {
-                        printDirectoryDeeply(file);
-                    }
-                }
-                System.out.println(dir.getPath());
+
+    //подсчёт глубины рекурсии
+    private static int recursionDepth(File dir) {
+
+        File[] files = dir.listFiles();
+        int depth = 0;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                depth++;
+                recursionDepth(file);
             }
         }
+        return depth;
+    }
+
+
+    public static void printDirectoryDeeply(String dirName, int depth) {
+        File dir = new File(dirName);
+        if (!dir.isDirectory()) {
+            return;
+        }
+        StringBuilder space = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            space.append(' ');
+        }
+        File files[] = dir.listFiles();
+        for (File file : files) {
+            System.out.println(space.toString() + file.getName());
+            if (file.isDirectory()) {
+                printDirectoryDeeply(file.getPath(), depth + 1);
+            }
+        }
+    }
 }

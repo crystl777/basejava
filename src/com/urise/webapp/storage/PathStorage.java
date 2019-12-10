@@ -10,13 +10,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
     private SerializationStrategy serializationStrategy;
 
 
-    protected AbstractPathStorage(String dir, SerializationStrategy serializationStrategy) {
+    protected PathStorage(String dir, SerializationStrategy serializationStrategy) {
         this.serializationStrategy = serializationStrategy;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
@@ -27,20 +29,12 @@ public class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     public void clear() {
-        try {
-            Files.list(directory).forEach(this::deleteResume);
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
-        }
+        fileList(directory).forEach(this::deleteResume);
     }
 
     @Override
     public int size() {
-        try {
-            return (int) Files.walk(directory).count() - 1;
-        } catch (IOException e) {
-            throw new StorageException("directory is null", directory.toString(), e);
-        }
+        return (int) fileList(directory).count();
     }
 
 
@@ -57,7 +51,7 @@ public class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected void updateResume(Resume resume, Path path) {
         try {
-            serializationStrategy.writeResume(resume, new BufferedOutputStream(new FileOutputStream(path.toString())));
+            serializationStrategy.writeResume(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("File write error", path.toString(), e);
         }
@@ -69,7 +63,7 @@ public class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("delete is not successful", path.toString());
         }
     }
 
@@ -77,7 +71,7 @@ public class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume getResume(Path path) {
         try {
-            return serializationStrategy.readResume(new BufferedInputStream(new FileInputStream(path.toString())));
+            return serializationStrategy.readResume(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("IO error", path.toString(), e);
         }
@@ -86,26 +80,32 @@ public class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isExist(Path path) {
-        return Files.exists(path);
+        return Files.isRegularFile(path);
     }
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return new File(directory.toString(), uuid).toPath();
+        return directory.resolve(uuid);
     }
 
 
     @Override
     protected List<Resume> getStorageList() {
+
+        List<Resume> resumeList = new ArrayList<>();
+        List<Path> pathList = fileList(directory).collect(Collectors.toList());
+
+        for (Path path : pathList) {
+            resumeList.add(getResume(path));
+        }
+        return resumeList;
+    }
+
+    private Stream<Path> fileList(Path directory) {
         try {
-            File[] files = directory.toFile().listFiles();
-            List<Resume> fileList = new ArrayList<>();
-            for (File file : Objects.requireNonNull(files)) {
-                fileList.add(getResume(file.toPath()));
-            }
-            return fileList;
-        } catch (NullPointerException e) {
-            throw new StorageException("directory is null", directory.toString(), e);
+            return Files.list(directory);
+        } catch (IOException e) {
+            throw new StorageException("directory is falling", directory.toString());
         }
     }
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class MainFile {
     public static void main(String[] args) {
+
         String filePath = ".gitignore";
 
         File file = new File(filePath);
@@ -30,7 +31,9 @@ public class MainFile {
             throw new RuntimeException(e);
         }
 
-        printDirectoryDeeply("./src/com/urise/webapp", recursionDepth(dir));
+
+        File testFile = new File("./src/com/urise/webapp");
+        printDirectory(testFile, "");
     }
 
 
@@ -51,20 +54,17 @@ public class MainFile {
 
 
     //рекурсивный вывод каталогов и файлов с отступами
-    public static void printDirectoryDeeply(String dirName, int depth) {
-        File dir = new File(dirName);
-        if (!dir.isDirectory()) {
-            return;
-        }
-        StringBuilder space = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            space.append(' ');
-        }
-        File files[] = dir.listFiles();
-        for (File file : files) {
-            System.out.println(space.toString() + file.getName());
-            if (file.isDirectory()) {
-                printDirectoryDeeply(file.getPath(), depth + 1);
+    public static void printDirectory(File file, String indent) {
+
+        File[] fileList = file.listFiles();
+        if (fileList != null) {
+            for (File f : fileList) {
+                if (f.isFile()) {
+                    System.out.println(indent + f.getName());
+                } else if (f.isDirectory()) {
+                    System.out.println(indent + f.getName());
+                    printDirectory(f, "  " + indent);
+                }
             }
         }
     }

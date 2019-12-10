@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage implements SerializationStrategy {
+public class ObjectStreamStrategy implements SerializationStrategy {
 
     @Override
     public void writeResume(Resume resume, OutputStream os) throws IOException {

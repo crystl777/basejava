@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private File directory;
     private SerializationStrategy serializationStrategy;
 
 
-    protected AbstractFileStorage(File directory, SerializationStrategy serializationStrategy) {
+    protected FileStorage(File directory, SerializationStrategy serializationStrategy) {
         this.serializationStrategy = serializationStrategy;
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
@@ -27,23 +27,14 @@ public class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-        try {
-            File[] allContents = directory.listFiles();
-            for (File file : Objects.requireNonNull(allContents)) {
-                file.delete();
-            }
-        } catch (NullPointerException e) {
-            throw new StorageException("directory is null", directory.getName(), e);
+        for (File file : fileList(directory)) {
+            deleteResume(file);
         }
     }
 
     @Override
     public int size() {
-        try {
-            return Objects.requireNonNull(directory.listFiles()).length;
-        } catch (NullPointerException e) {
-            throw new StorageException("directory is null", directory.getName(), e);
-        }
+        return fileList(directory).length;
     }
 
     @Override
@@ -68,7 +59,9 @@ public class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void deleteResume(File file) {
-        file.delete();
+        if (!file.delete()) {
+            throw new StorageException("delete is not successful", file.getName());
+        }
     }
 
 
@@ -95,15 +88,17 @@ public class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> getStorageList() {
-        try {
-            File[] files = directory.listFiles();
-            List<Resume> fileList = new ArrayList<>();
-            for (File file : Objects.requireNonNull(files)) {
-                fileList.add(getResume(file));
-            }
-            return fileList;
-        } catch (NullPointerException e) {
-            throw new StorageException("directory is null", directory.getName(), e);
+        List<Resume> fileList = new ArrayList<>();
+        for (File file : fileList(directory)) {
+            fileList.add(getResume(file));
         }
+        return fileList;
+    }
+
+    private File[] fileList (File directory) {
+        File[] allContents = directory.listFiles();
+        if (allContents == null) {
+            throw new StorageException("directory is null", directory.getName());
+        } else return allContents;
     }
 }

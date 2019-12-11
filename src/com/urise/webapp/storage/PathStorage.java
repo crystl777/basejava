@@ -3,11 +3,12 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -91,14 +92,13 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> getStorageList() {
-
-        List<Resume> resumeList = new ArrayList<>();
-        List<Path> pathList = fileList(directory).collect(Collectors.toList());
-
-        for (Path path : pathList) {
-            resumeList.add(getResume(path));
+        try {
+            return Files.list(directory)
+                    .map(this::getResume)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new StorageException("IO error", directory.toString(), e);
         }
-        return resumeList;
     }
 
     private Stream<Path> fileList(Path directory) {

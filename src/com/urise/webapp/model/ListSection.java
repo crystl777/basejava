@@ -5,7 +5,10 @@ import java.util.Objects;
 
 public class ListSection extends AbstractSection {
 
-    private final List<String> listComponent;
+    private List<String> listComponent;
+
+    public ListSection() {
+    }
 
     public ListSection(List<String> listComponent) {
         Objects.requireNonNull(listComponent, "items must not be null");

@@ -2,6 +2,8 @@ package com.urise.webapp.model;
 
 import com.urise.webapp.util.DateUtil;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -9,13 +11,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
     private static final long SERIAL_VERSION_UID = 1L;
-    private final Link homePage;
+    private Link homePage;
     private List<Position> positions;
 
-
+    public Organization() {
+    }
 
     public Organization(String name, String url, Position... positions) {
         this(new Link(name, url), Arrays.asList(positions));
@@ -26,6 +29,21 @@ public class Organization implements Serializable {
         this.positions = positions;
     }
 
+    public Link getHomePage() {
+        return homePage;
+    }
+
+    public List<Position> getPositions() {
+        return positions;
+    }
+
+    public void setHomePage(Link homePage) {
+        this.homePage = homePage;
+    }
+
+    public void setPositions(List<Position> positions) {
+        this.positions = positions;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -46,12 +64,15 @@ public class Organization implements Serializable {
         return "Organization(" + homePage + "," + positions + ')';
     }
 
-
+    @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
-        private final LocalDate dateStart;
-        private final LocalDate dateEnd;
-        private final String title;
-        private final String description;
+        private LocalDate dateStart;
+        private LocalDate dateEnd;
+        private String title;
+        private String description;
+
+        public Position() {
+        }
 
         public Position(int startYear, Month startMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), DateUtil.NOW, title, description);
@@ -86,6 +107,22 @@ public class Organization implements Serializable {
 
         public String getDescription() {
             return description;
+        }
+
+        public void setDateStart(LocalDate dateStart) {
+            this.dateStart = dateStart;
+        }
+
+        public void setDateEnd(LocalDate dateEnd) {
+            this.dateEnd = dateEnd;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
 
         @Override

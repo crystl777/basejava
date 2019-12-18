@@ -4,7 +4,10 @@ import java.util.Objects;
 
 public class StringSection extends AbstractSection {
 
-    private final String text;
+    private String text;
+
+    public StringSection() {
+    }
 
     public StringSection(String text) {
         Objects.requireNonNull(text, "content must not be null");

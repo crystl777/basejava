@@ -2,6 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.serializer.StreamSerializer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -16,10 +17,10 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
-    private SerializationStrategy serializationStrategy;
+    private StreamSerializer serializationStrategy;
 
 
-    protected PathStorage(String dir, SerializationStrategy serializationStrategy) {
+    protected PathStorage(String dir, StreamSerializer serializationStrategy) {
         this.serializationStrategy = serializationStrategy;
         directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory must not be null");
@@ -92,13 +93,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> getStorageList() {
-        try {
-            return Files.list(directory)
-                    .map(this::getResume)
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new StorageException("IO error", directory.toString(), e);
-        }
+        return fileList(directory).map(this::getResume).collect(Collectors.toList());
     }
 
     private Stream<Path> fileList(Path directory) {

@@ -1,12 +1,9 @@
 package com.urise.webapp.model;
 
-import com.urise.webapp.util.DateUtil;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -73,15 +70,6 @@ public class Organization implements Serializable {
 
         public Position() {
         }
-
-        public Position(int startYear, Month startMonth, String title, String description) {
-            this(DateUtil.of(startYear, startMonth), DateUtil.NOW, title, description);
-        }
-
-        public Position(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
-            this(DateUtil.of(startYear, startMonth), DateUtil.of(endYear, endMonth), title, description);
-        }
-
 
         public Position(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
             Objects.requireNonNull(dateStart, "dateStart must not be null");

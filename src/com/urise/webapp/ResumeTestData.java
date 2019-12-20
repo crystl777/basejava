@@ -116,9 +116,5 @@ public class ResumeTestData {
 
         System.out.println(SectionType.EDUCATION.getTitle() + " "
                 + resume.getSections().get(SectionType.EDUCATION));
-
-
-
-
     }
 }

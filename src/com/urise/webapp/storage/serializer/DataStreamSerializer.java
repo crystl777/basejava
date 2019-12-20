@@ -14,7 +14,11 @@ public class DataStreamSerializer implements StreamSerializer {
 
     @Override
     public void writeResume(Resume resume, OutputStream os) throws IOException {
+
         try (DataOutputStream dos = new DataOutputStream(os)) {
+
+
+            //реализация записи резюме и контактов резюме (дано было в уроке)
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
             Map<ContactType, String> contacts = resume.getContacts();
@@ -23,10 +27,10 @@ public class DataStreamSerializer implements StreamSerializer {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
             }
+            //конец реализации записи контактов (дано было в уроке)
 
-            // TODO implements sections
 
-
+            //реализация записи секций (мой код)
             Map<SectionType, AbstractSection> section = resume.getSections();
             dos.writeInt(section.size());
 
@@ -34,41 +38,37 @@ public class DataStreamSerializer implements StreamSerializer {
                 SectionType sectionType = entry.getKey();
                 dos.writeUTF(sectionType.getTitle());
 
-                if (sectionType.equals(SectionType.PERSONAL) || sectionType.equals(SectionType.OBJECTIVE)) {
-                    dos.writeUTF(entry.getValue().toString());
-
-                } else if (sectionType.equals(SectionType.ACHIEVEMENT)
-                        || sectionType.equals(SectionType.QUALIFICATIONS)) {
-
-                    ListSection listSection = (ListSection) entry.getValue();
-                    dos.writeInt(listSection.getListComponent().size());
-                    for (String s : listSection.getListComponent()) {
-                        dos.writeUTF(s);
-                    }
-                } else if (sectionType.equals(SectionType.EXPERIENCE) || sectionType.equals(SectionType.EDUCATION)) {
-
-                    OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
-                    dos.writeInt(organizationSection.getOrganizations().size());
-                    for (Organization o : organizationSection.getOrganizations()) {
-                        dos.writeUTF(o.getHomePage().getName());
-                        dos.writeUTF(o.getHomePage().getUrl());
-
-                        dos.writeInt(o.getPositions().size());
-                        for (Organization.Position op : o.getPositions()) {
-                            dos.writeInt(op.getStartDate().getYear());
-                            dos.writeInt(op.getStartDate().getMonth().getValue());
-                            dos.writeInt(op.getStartDate().getDayOfMonth());
-
-                            dos.writeInt(op.getEndDate().getYear());
-                            dos.writeInt(op.getEndDate().getMonth().getValue());
-                            dos.writeInt(op.getEndDate().getDayOfMonth());
-
-                            dos.writeUTF(op.getTitle());
-                            dos.writeUTF(op.getDescription());
+                switch (sectionType.getTitle()) {
+                    case ("Личные качества"):
+                    case ("Позиция"):
+                        dos.writeUTF(String.valueOf(entry.getValue()));
+                        break;
+                    case ("Достижения"):
+                    case ("Квалификация"):
+                        ListSection listSection = (ListSection) entry.getValue();
+                        dos.writeInt(listSection.getListComponent().size());
+                        for (String s : listSection.getListComponent()) {
+                            dos.writeUTF(s);
                         }
-                    }
+                        break;
+                    case ("Опыт работы"):
+                    case ("Образование"):
+                        OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
+                        dos.writeInt(organizationSection.getOrganizations().size());
+                        for (Organization o : organizationSection.getOrganizations()) {
+                            dos.writeUTF(o.getHomePage().getName());
+                            writeNullElement(o.getHomePage().getUrl(), dos);
+                            dos.writeInt(o.getPositions().size());
+
+                            for (Organization.Position op : o.getPositions()) {
+                                writeDate(op, dos);
+                                dos.writeUTF(op.getTitle());
+                                writeNullElement(op.getDescription(), dos);
+                            }
+                        }
                 }
             }
+            //конец реализации записи секций (мой код)
         }
     }
 
@@ -76,67 +76,85 @@ public class DataStreamSerializer implements StreamSerializer {
     @Override
     public Resume readResume(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
+
+
+            //реализация чтения резюме и контактов (дано было в уроке)
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-
             int sizeContacts = dis.readInt();
-
             for (int i = 0; i < sizeContacts; i++) {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
+            //конец чтения контактов (дано было в уроке)
 
 
+            //реализация чтения секций (мой код)
             int sizeSections = dis.readInt();
-
             for (int i = 0; i < sizeSections; i++) {
-
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                if (sectionType.equals(SectionType.PERSONAL) || sectionType.equals(SectionType.OBJECTIVE)) {
-                    resume.addSection(sectionType, new StringSection(dis.readUTF()));
 
-                } else if (sectionType.equals(SectionType.ACHIEVEMENT)
-                        || sectionType.equals(SectionType.QUALIFICATIONS)) {
-
-                    ListSection listSection = new ListSection();
-                    int sizeListSection = dis.readInt();
-                    for (int j = 0; j < sizeListSection; j++) {
-                        listSection.getListComponent().add(dis.readUTF());
-                    }
-                    resume.addSection(sectionType, listSection);
-
-                } else if (sectionType.equals(SectionType.EXPERIENCE) || sectionType.equals(SectionType.EDUCATION)) {
-
-                    OrganizationSection organizationSection = new OrganizationSection();
-                    List<Organization> listOrganization = new ArrayList<>();
-                    int sizeOrganizationSection = dis.readInt();
-
-                    for (int j = 0; j < sizeOrganizationSection; j++) {
-                        Organization organization = new Organization();
-                        organization.setHomePage(new Link(dis.readUTF(), dis.readUTF()));
-                        List<Organization.Position> listPosition = new ArrayList<>();
-
-                        int sizePosition = dis.readInt();
-                        for (int k = 0; k < sizePosition; k++) {
-                            Organization.Position organizationPosition = new Organization.Position();
-                            organizationPosition
-                                    .setDateStart(LocalDate.of(dis.readInt(), dis.readInt(), dis.readInt()));
-                            organizationPosition
-                                    .setDateEnd(LocalDate.of(dis.readInt(), dis.readInt(), dis.readInt()));
-                            organizationPosition
-                                    .setTitle(dis.readUTF());
-                            organizationPosition
-                                    .setDescription(dis.readUTF());
-                            listPosition.add(organizationPosition);
+                switch (sectionType.getTitle()) {
+                    case ("Личные качества"):
+                    case ("Позиция"):
+                        resume.addSection(sectionType, new StringSection(dis.readUTF()));
+                        break;
+                    case ("Достижения"):
+                    case ("Квалификация"):
+                        ListSection listSection = new ListSection();
+                        int sizeListSection = dis.readInt();
+                        for (int j = 0; j < sizeListSection; j++) {
+                            listSection.getListComponent().add(dis.readUTF());
                         }
-                        organization.setPositions(listPosition);
-                        listOrganization.add(organization);
-                        organizationSection.setOrganizations(listOrganization);
-                        resume.addSection(sectionType, organizationSection);
-                    }
+                        resume.addSection(sectionType, listSection);
+                    case ("Опыт работы"):
+                    case ("Образование"):
+                        OrganizationSection organizationSection = new OrganizationSection();
+                        List<Organization> listOrganization = new ArrayList<>();
+                        int sizeOrganizationSection = dis.readInt();
+
+                        for (int j = 0; j < sizeOrganizationSection; j++) {
+                            Organization organization = new Organization();
+                            organization.setHomePage(new Link(dis.readUTF(), dis.readUTF()));
+                            List<Organization.Position> listPosition = new ArrayList<>();
+
+                            int sizePosition = dis.readInt();
+                            for (int k = 0; k < sizePosition; k++) {
+                                Organization.Position organizationPosition = new Organization.Position(readDate(dis),
+                                        readDate(dis), dis.readUTF(), dis.readUTF());
+                                listPosition.add(organizationPosition);
+                            }
+                            organization.setPositions(listPosition);
+                            listOrganization.add(organization);
+                            organizationSection.setOrganizations(listOrganization);
+                            resume.addSection(sectionType, organizationSection);
+                        }
                 }
             }
+            //конец реализации чтения секций (мой код)
+
+
             return resume;
         }
+    }
+
+    private void writeDate(Organization.Position op, DataOutputStream dos) throws IOException {
+        dos.writeInt(op.getStartDate().getYear());
+        dos.writeInt(op.getStartDate().getMonth().getValue());
+        dos.writeInt(op.getStartDate().getDayOfMonth());
+
+        dos.writeInt(op.getEndDate().getYear());
+        dos.writeInt(op.getEndDate().getMonth().getValue());
+        dos.writeInt(op.getEndDate().getDayOfMonth());
+    }
+
+    private LocalDate readDate(DataInputStream dis) throws IOException {
+        return LocalDate.of(dis.readInt(), dis.readInt(), dis.readInt());
+    }
+
+    private void writeNullElement(String element, DataOutputStream dos) throws IOException {
+        if (element == null) {
+            dos.writeUTF("");
+        } else dos.writeUTF(element);
     }
 }

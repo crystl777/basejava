@@ -38,21 +38,21 @@ public class DataStreamSerializer implements StreamSerializer {
                 SectionType sectionType = entry.getKey();
                 dos.writeUTF(sectionType.getTitle());
 
-                switch (sectionType.getTitle()) {
-                    case ("Личные качества"):
-                    case ("Позиция"):
+                switch (sectionType.name()) {
+                    case ("PERSONAL"):
+                    case ("OBJECTIVE"):
                         dos.writeUTF(String.valueOf(entry.getValue()));
                         break;
-                    case ("Достижения"):
-                    case ("Квалификация"):
+                    case ("ACHIEVEMENT"):
+                    case ("QUALIFICATIONS"):
                         ListSection listSection = (ListSection) entry.getValue();
                         dos.writeInt(listSection.getListComponent().size());
                         for (String s : listSection.getListComponent()) {
                             dos.writeUTF(s);
                         }
                         break;
-                    case ("Опыт работы"):
-                    case ("Образование"):
+                    case ("EXPERIENCE"):
+                    case ("EDUCATION"):
                         OrganizationSection organizationSection = (OrganizationSection) entry.getValue();
                         dos.writeInt(organizationSection.getOrganizations().size());
                         for (Organization o : organizationSection.getOrganizations()) {
@@ -61,7 +61,8 @@ public class DataStreamSerializer implements StreamSerializer {
                             dos.writeInt(o.getPositions().size());
 
                             for (Organization.Position op : o.getPositions()) {
-                                writeDate(op, dos);
+                                writeDate(op.getStartDate(), dos);
+                                writeDate(op.getEndDate(), dos);
                                 dos.writeUTF(op.getTitle());
                                 writeNullElement(op.getDescription(), dos);
                             }
@@ -95,40 +96,40 @@ public class DataStreamSerializer implements StreamSerializer {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
 
                 switch (sectionType.getTitle()) {
-                    case ("Личные качества"):
-                    case ("Позиция"):
+                    case ("PERSONAL"):
+                    case ("OBJECTIVE"):
                         resume.addSection(sectionType, new StringSection(dis.readUTF()));
                         break;
-                    case ("Достижения"):
-                    case ("Квалификация"):
+                    case ("ACHIEVEMENT"):
+                    case ("QUALIFICATIONS"):
                         ListSection listSection = new ListSection();
                         int sizeListSection = dis.readInt();
                         for (int j = 0; j < sizeListSection; j++) {
                             listSection.getListComponent().add(dis.readUTF());
                         }
                         resume.addSection(sectionType, listSection);
-                    case ("Опыт работы"):
-                    case ("Образование"):
+                    case ("EXPERIENCE"):
+                    case ("EDUCATION"):
                         OrganizationSection organizationSection = new OrganizationSection();
                         List<Organization> listOrganization = new ArrayList<>();
                         int sizeOrganizationSection = dis.readInt();
 
                         for (int j = 0; j < sizeOrganizationSection; j++) {
                             Organization organization = new Organization();
-                            organization.setHomePage(new Link(dis.readUTF(), dis.readUTF()));
+                            organization.setHomePage(new Link(dis.readUTF(), readNullElement(dis)));
                             List<Organization.Position> listPosition = new ArrayList<>();
 
                             int sizePosition = dis.readInt();
                             for (int k = 0; k < sizePosition; k++) {
                                 Organization.Position organizationPosition = new Organization.Position(readDate(dis),
-                                        readDate(dis), dis.readUTF(), dis.readUTF());
+                                        readDate(dis), dis.readUTF(), readNullElement(dis));
                                 listPosition.add(organizationPosition);
                             }
                             organization.setPositions(listPosition);
                             listOrganization.add(organization);
-                            organizationSection.setOrganizations(listOrganization);
-                            resume.addSection(sectionType, organizationSection);
                         }
+                        organizationSection.setOrganizations(listOrganization);
+                        resume.addSection(sectionType, organizationSection);
                 }
             }
             //конец реализации чтения секций (мой код)
@@ -138,14 +139,12 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private void writeDate(Organization.Position op, DataOutputStream dos) throws IOException {
-        dos.writeInt(op.getStartDate().getYear());
-        dos.writeInt(op.getStartDate().getMonth().getValue());
-        dos.writeInt(op.getStartDate().getDayOfMonth());
 
-        dos.writeInt(op.getEndDate().getYear());
-        dos.writeInt(op.getEndDate().getMonth().getValue());
-        dos.writeInt(op.getEndDate().getDayOfMonth());
+    //реализация методов для избежания дублирования кода
+    private void writeDate(LocalDate localDate, DataOutputStream dos) throws IOException {
+        dos.writeInt(localDate.getYear());
+        dos.writeInt(localDate.getMonth().getValue());
+        dos.writeInt(localDate.getDayOfMonth());
     }
 
     private LocalDate readDate(DataInputStream dis) throws IOException {
@@ -156,5 +155,11 @@ public class DataStreamSerializer implements StreamSerializer {
         if (element == null) {
             dos.writeUTF("");
         } else dos.writeUTF(element);
+    }
+
+    private String readNullElement(DataInputStream dis) throws IOException {
+        if (dis.readUTF().equals("")) {
+            return "";
+        } else return dis.readUTF();
     }
 }

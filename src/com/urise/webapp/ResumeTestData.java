@@ -3,16 +3,21 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
+import com.urise.webapp.storage.PathStorage;
+import com.urise.webapp.storage.serializer.DataStreamSerializer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
 public class ResumeTestData {
+    static final String UUID = "uuid";
 
     public static void main(String[] args) {
 
-        Resume resume = new Resume("uuid", "James Smith");
+        Resume resume = new Resume(UUID, "James Smith");
 
         StringSection personalStringSection = new StringSection("personal text");
         StringSection objectiveStringSection = new StringSection("objective text");
@@ -45,7 +50,7 @@ public class ResumeTestData {
                         "title education", "description education"));
 
 
-       Organization experience = new Organization(new Link("google", "google.com"), listPositionExperience);
+       Organization experience = new Organization(new Link("google",null), listPositionExperience);
        Organization education = new Organization(new Link("yandex", "yandex.ru"), listPositionEducation);
 
 
@@ -72,7 +77,23 @@ public class ResumeTestData {
         resume.getSections().put(SectionType.EXPERIENCE, listExperience);
         resume.getSections().put(SectionType.EDUCATION, listEducation);
 
+        printResume(resume);
 
+        //пробую записать и считать резюме через PathStorage
+
+        PathStorage ps = new PathStorage("storage", new DataStreamSerializer());
+        ps.save(resume);
+
+        System.out.println("*************************************");
+        System.out.println("РЕЗЮМЕ СОХРАНИЛИ");
+        System.out.println("*************************************");
+
+        Resume r = ps.get(UUID);
+        printResume(r);
+    }
+
+
+    private static void printResume (Resume resume) {
         System.out.println(resume.getUuid());
         System.out.println(resume.getFullName());
 
@@ -116,5 +137,10 @@ public class ResumeTestData {
 
         System.out.println(SectionType.EDUCATION.getTitle() + " "
                 + resume.getSections().get(SectionType.EDUCATION));
+
     }
+
 }
+
+
+

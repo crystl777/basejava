@@ -18,6 +18,9 @@ public class StringSection extends AbstractSection {
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
 
     @Override
     public boolean equals(Object o) {

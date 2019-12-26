@@ -3,22 +3,25 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
-import com.urise.webapp.storage.PathStorage;
-import com.urise.webapp.storage.serializer.DataStreamSerializer;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class ResumeTestData {
-    static final String UUID = "uuid";
 
-    public static void main(String[] args) {
+    public static void addContactsResume(Resume resume) {
+        resume.getContacts().put(ContactType.PHONE_NUMBER, "+7-999-000-11-22");
+        resume.getContacts().put(ContactType.SKYPE, "zzz");
+        resume.getContacts().put(ContactType.E_MAIL, "zzz@zzz.com");
+        resume.getContacts().put(ContactType.LINKEDIN, "linkedin.com/zzz");
+        resume.getContacts().put(ContactType.GITHUB, "github.com/zzz");
+        resume.getContacts().put(ContactType.STACKOVERFLOW, "stackoverflow.com/zzz");
+        resume.getContacts().put(ContactType.HOME_PAGE, "zzz.ru");
 
-        Resume resume = new Resume(UUID, "James Smith");
+    }
 
+    public static void addSectionsResume(Resume resume) {
         StringSection personalStringSection = new StringSection("personal text");
         StringSection objectiveStringSection = new StringSection("objective text");
 
@@ -50,8 +53,8 @@ public class ResumeTestData {
                         "title education", "description education"));
 
 
-       Organization experience = new Organization(new Link("google",null), listPositionExperience);
-       Organization education = new Organization(new Link("yandex", "yandex.ru"), listPositionEducation);
+        Organization experience = new Organization(new Link("google","google.com"), listPositionExperience);
+        Organization education = new Organization(new Link("yandex", "yandex.ru"), listPositionEducation);
 
 
         List<Organization> experienceComponents = new ArrayList<>();
@@ -62,13 +65,6 @@ public class ResumeTestData {
         OrganizationSection listExperience = new OrganizationSection(experienceComponents);
         OrganizationSection listEducation = new OrganizationSection(educationComponents);
 
-        resume.getContacts().put(ContactType.PHONE_NUMBER, "+7-999-000-11-22");
-        resume.getContacts().put(ContactType.SKYPE, "zzz");
-        resume.getContacts().put(ContactType.E_MAIL, "zzz@zzz.com");
-        resume.getContacts().put(ContactType.LINKEDIN, "linkedin.com/zzz");
-        resume.getContacts().put(ContactType.GITHUB, "github.com/zzz");
-        resume.getContacts().put(ContactType.STACKOVERFLOW, "stackoverflow.com/zzz");
-        resume.getContacts().put(ContactType.HOME_PAGE, "zzz.ru");
 
         resume.getSections().put(SectionType.PERSONAL, personalStringSection);
         resume.getSections().put(SectionType.OBJECTIVE, objectiveStringSection);
@@ -76,70 +72,7 @@ public class ResumeTestData {
         resume.getSections().put(SectionType.QUALIFICATIONS, qualificationListSection);
         resume.getSections().put(SectionType.EXPERIENCE, listExperience);
         resume.getSections().put(SectionType.EDUCATION, listEducation);
-
-        printResume(resume);
-
-        //пробую записать и считать резюме через PathStorage
-
-        PathStorage ps = new PathStorage("storage", new DataStreamSerializer());
-        ps.save(resume);
-
-        System.out.println("*************************************");
-        System.out.println("РЕЗЮМЕ СОХРАНИЛИ");
-        System.out.println("*************************************");
-
-        Resume r = ps.get(UUID);
-        printResume(r);
     }
-
-
-    private static void printResume (Resume resume) {
-        System.out.println(resume.getUuid());
-        System.out.println(resume.getFullName());
-
-        System.out.println(ContactType.PHONE_NUMBER.getTitle() + " "
-                + resume.getContacts().get(ContactType.PHONE_NUMBER));
-
-        System.out.println(ContactType.SKYPE.getTitle() + " "
-                + resume.getContacts().get(ContactType.SKYPE));
-
-        System.out.println(ContactType.E_MAIL.getTitle() + " "
-                + resume.getContacts().get(ContactType.E_MAIL));
-
-        System.out.println(ContactType.LINKEDIN + " "
-                + resume.getContacts().get(ContactType.LINKEDIN));
-
-        System.out.println(ContactType.GITHUB + " "
-                + resume.getContacts().get(ContactType.GITHUB));
-
-        System.out.println(ContactType.STACKOVERFLOW + " "
-                + resume.getContacts().get(ContactType.STACKOVERFLOW));
-
-        System.out.println(ContactType.HOME_PAGE + " " +
-                resume.getContacts().get(ContactType.HOME_PAGE));
-
-        System.out.println("---------------------------------------------");
-
-        System.out.println(SectionType.PERSONAL.getTitle() + " "
-                + resume.getSections().get(SectionType.PERSONAL));
-
-        System.out.println(SectionType.OBJECTIVE.getTitle() + " "
-                + resume.getSections().get(SectionType.OBJECTIVE));
-
-        System.out.println(SectionType.ACHIEVEMENT.getTitle() + " "
-                + resume.getSections().get(SectionType.ACHIEVEMENT));
-
-        System.out.println(SectionType.QUALIFICATIONS.getTitle() + " "
-                + resume.getSections().get(SectionType.QUALIFICATIONS));
-
-        System.out.println(SectionType.EXPERIENCE.getTitle() + " "
-                + resume.getSections().get(SectionType.EXPERIENCE));
-
-        System.out.println(SectionType.EDUCATION.getTitle() + " "
-                + resume.getSections().get(SectionType.EDUCATION));
-
-    }
-
 }
 
 

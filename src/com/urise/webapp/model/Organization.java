@@ -1,7 +1,10 @@
 package com.urise.webapp.model;
 
+import com.urise.webapp.util.LocalDateAdapter;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -10,7 +13,8 @@ import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
-    private static final long SERIAL_VERSION_UID = 1L;
+
+    private static final long serialVersionUID = -8125446408286037069L;
     private Link homePage;
     private List<Position> positions;
 
@@ -63,13 +67,17 @@ public class Organization implements Serializable {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Position implements Serializable {
+        private static final long serialVersionUID = 4105975637823481427L;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate dateStart;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate dateEnd;
         private String title;
         private String description;
 
         public Position() {
         }
+
 
         public Position(LocalDate dateStart, LocalDate dateEnd, String title, String description) {
             Objects.requireNonNull(dateStart, "dateStart must not be null");
@@ -118,9 +126,9 @@ public class Organization implements Serializable {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             Position position = (Position) o;
-            return Objects.equals(dateEnd, position.dateStart) &&
-                    Objects.equals(dateEnd, position.dateStart) &&
-                    Objects.equals(title, position.title) &&
+            return dateStart.equals(position.dateStart) &&
+                    dateEnd.equals(position.dateEnd) &&
+                    title.equals(position.title) &&
                     Objects.equals(description, position.description);
         }
 

@@ -5,13 +5,14 @@ import java.util.Objects;
 
 public class ListSection extends AbstractSection {
 
+    private static final long serialVersionUID = -5509188542918453567L;
     private List<String> listComponent;
 
     public ListSection() {
     }
 
     public ListSection(List<String> listComponent) {
-        Objects.requireNonNull(listComponent, "items must not be null");
+        Objects.requireNonNull(listComponent, "listComponent must not be null");
         this.listComponent = listComponent;
     }
 
@@ -25,7 +26,7 @@ public class ListSection extends AbstractSection {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListSection that = (ListSection) o;
-        return Objects.equals(listComponent, that.listComponent);
+        return listComponent.equals(that.listComponent);
     }
 
     @Override

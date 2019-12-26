@@ -1,5 +1,6 @@
 package com.urise.webapp.storage;
 
+import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
@@ -24,10 +25,11 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    private Resume resume1 = new Resume(UUID_1, "Bob");
-    private Resume resume2 = new Resume(UUID_2, "James");
-    private Resume resume3 = new Resume(UUID_3, "Christopher");
-    private Resume resume4 = new Resume(UUID_4, "Jason");
+
+    private static final Resume resume1 = new Resume(UUID_1, "Bob");
+    private static final Resume resume2 = new Resume(UUID_2, "James");
+    private static final Resume resume3 = new Resume(UUID_3, "Christopher");
+    private static final Resume resume4 = new Resume(UUID_4, "Jason");
 
 
     public AbstractStorageTest(Storage storage) {
@@ -37,8 +39,14 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
+        ResumeTestData.addContactsResume(resume1);
+        ResumeTestData.addSectionsResume(resume1);
         storage.save(resume1);
+        ResumeTestData.addContactsResume(resume2);
+        ResumeTestData.addSectionsResume(resume2);
         storage.save(resume2);
+        ResumeTestData.addContactsResume(resume3);
+        ResumeTestData.addSectionsResume(resume3);
         storage.save(resume3);
     }
 
@@ -69,8 +77,11 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        storage.update(new Resume(UUID_1, "Bob"));
-        Assert.assertEquals(resume1, storage.get(UUID_1));
+        Resume resume = new Resume(UUID_1, "Bob");
+        ResumeTestData.addContactsResume(resume1);
+        ResumeTestData.addSectionsResume(resume1);
+        storage.update(resume);
+        Assert.assertEquals(resume, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)

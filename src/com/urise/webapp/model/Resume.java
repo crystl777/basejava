@@ -20,12 +20,12 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Resume implements Comparable<Resume>, Serializable {
 
-    private static final long SERIAL_VERSION_UID = 1L;
+    private static final long serialVersionUID = -4340614533007334749L;
     private String fullName;
     private String uuid;  // Unique identifier
 
-    private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
-    private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
+    private  Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    private  Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume() {
     }
@@ -71,15 +71,15 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Resume resume = (Resume) o;
-        return Objects.equals(uuid, resume.uuid) &&
-                Objects.equals(fullName, resume.fullName) &&
+        return fullName.equals(resume.fullName) &&
+                uuid.equals(resume.uuid) &&
                 Objects.equals(contacts, resume.contacts) &&
                 Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName, contacts, sections);
+        return Objects.hash(fullName, uuid, contacts, sections);
     }
 
     @Override

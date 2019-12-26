@@ -18,7 +18,7 @@ public class JsonStreamSerializer implements StreamSerializer {
     @Override
     public Resume readResume(InputStream is) throws IOException {
         try (Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
-            return JsonParser.read(reader, Resume.class);
+            return JsonParser.read(reader, Resume.class );
         }
     }
 }

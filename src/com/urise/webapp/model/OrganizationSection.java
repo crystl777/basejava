@@ -1,15 +1,13 @@
 package com.urise.webapp.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@XmlAccessorType(XmlAccessType.FIELD)
+
 public class OrganizationSection extends AbstractSection {
 
-    private static final long SERIAL_VERSION_UID = 1L;
+    private static final long serialVersionUID = -8890439997519792139L;
 
     private List<Organization> organizations;
 
@@ -37,16 +35,13 @@ public class OrganizationSection extends AbstractSection {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         OrganizationSection that = (OrganizationSection) o;
-
         return organizations.equals(that.organizations);
-
     }
 
     @Override
     public int hashCode() {
-        return organizations.hashCode();
+        return Objects.hash(organizations);
     }
 
     @Override

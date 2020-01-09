@@ -7,6 +7,7 @@ import com.urise.webapp.model.type.SectionType;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,69 +18,59 @@ public class DataStreamSerializer implements StreamSerializer {
 
         try (DataOutputStream dos = new DataOutputStream(os)) {
 
-            //реализация записи резюме и контактов резюме (дано было в уроке)
+            //реализация записи имени и uuid резюме
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
+
+            //реализация записи контактов через функциональный интерфейс
             Map<ContactType, String> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(entry.getValue());
-            }
-            //конец реализации записи контактов (дано было в уроке)
+
+            writeWithException(contacts.entrySet(), dos, (entryContactType) -> {
+                dos.writeUTF(entryContactType.getKey().name());
+                dos.writeUTF(entryContactType.getValue());
+            });
 
 
-            //реализация записи секций (мой код)
+            //реализация записи секций через функциональный интерфейс
             Map<SectionType, AbstractSection> section = resume.getSections();
-            dos.writeInt(section.size());
 
-            for (Map.Entry<SectionType, AbstractSection> entry : section.entrySet()) {
-                SectionType sectionType = entry.getKey();
+            writeWithException(section.entrySet(), dos, (entrySectionType) -> {
+                SectionType sectionType = entrySectionType.getKey();
                 dos.writeUTF(sectionType.name());
 
                 switch (sectionType) {
 
                     case PERSONAL:
                     case OBJECTIVE:
-                        dos.writeUTF(((StringSection) entry.getValue()).getText());
+
+                        dos.writeUTF(((StringSection) entrySectionType.getValue()).getText());
                         break;
 
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
 
-                        List<String> listComponent = ((ListSection) entry.getValue()).getListComponent();
-                        dos.writeInt(listComponent.size());
-
-                        for (String s : listComponent) {
-                            dos.writeUTF(s);
-                        }
+                        writeWithException(((ListSection) entrySectionType.getValue()).getListComponent(), dos,
+                                dos::writeUTF);
                         break;
 
                     case EXPERIENCE:
                     case EDUCATION:
-                        List<Organization> listOrganizations = ((OrganizationSection) entry.getValue())
-                                .getOrganizations();
 
-                        dos.writeInt(listOrganizations.size());
-                        for (Organization o : listOrganizations) {
-                            dos.writeUTF(o.getHomePage().getName());
-                            writeNullElement(o.getHomePage().getUrl(), dos);
+                        writeWithException(((OrganizationSection) entrySectionType.getValue())
+                                .getOrganizations(), dos, (organization) -> {
+                            dos.writeUTF(organization.getHomePage().getName());
+                            writeNullElement(organization.getHomePage().getUrl(), dos);
 
+                            writeWithException(organization.getPositions(), dos, (position) -> {
+                                writeDate(position.getStartDate(), dos);
+                                writeDate(position.getEndDate(), dos);
+                                dos.writeUTF(position.getTitle());
+                                writeNullElement(position.getDescription(), dos);
+                            });
+                        });
 
-                            List<Organization.Position> positionsList = o.getPositions();
-                            dos.writeInt(positionsList.size());
-
-                            for (Organization.Position op : positionsList) {
-                                writeDate(op.getStartDate(), dos);
-                                writeDate(op.getEndDate(), dos);
-                                dos.writeUTF(op.getTitle());
-                                writeNullElement(op.getDescription(), dos);
-                            }
-                        }
-                        break;
                 }
-            }
-            //конец реализации записи секций (мой код)
+            });
         }
     }
 
@@ -177,5 +168,19 @@ public class DataStreamSerializer implements StreamSerializer {
         if (text.equals("")) {
             return null;
         } else return text;
+    }
+
+    @FunctionalInterface
+    private interface WritableElementOfCollection<T> {
+        void write(T t) throws IOException;
+    }
+
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dataOutputStream,
+                                        WritableElementOfCollection<T> writable) throws IOException {
+
+        dataOutputStream.writeInt(collection.size());
+        for (T element : collection) {
+            writable.write(element);
+        }
     }
 }

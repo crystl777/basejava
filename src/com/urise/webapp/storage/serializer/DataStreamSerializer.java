@@ -18,7 +18,7 @@ public class DataStreamSerializer implements StreamSerializer {
 
         try (DataOutputStream dos = new DataOutputStream(os)) {
 
-            //реализация записи имени и uuid резюме
+            //реализация записи uuid и имени резюме
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
 
@@ -68,7 +68,6 @@ public class DataStreamSerializer implements StreamSerializer {
                                 writeNullElement(position.getDescription(), dos);
                             });
                         });
-
                 }
             });
         }
@@ -80,23 +79,23 @@ public class DataStreamSerializer implements StreamSerializer {
         try (DataInputStream dis = new DataInputStream(is)) {
 
 
-            //реализация чтения резюме и контактов (дано было в уроке)
+            //реализация чтения uuid и имени резюме
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int sizeContacts = dis.readInt();
-            for (int i = 0; i < sizeContacts; i++) {
+
+            //реализация чтения контактов через функциональный интерфейс
+            readWithException(dis, () -> {
                 resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            }
-            //конец чтения контактов (дано было в уроке)
+            });
 
 
-            //реализация чтения секций (мой код)
-            int sizeSections = dis.readInt();
-            for (int i = 0; i < sizeSections; i++) {
+            //реализация чтения секций через функциональный интерфейс
+            readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
 
                 switch (sectionType) {
+
                     case PERSONAL:
                     case OBJECTIVE:
                         resume.addSection(sectionType, new StringSection(dis.readUTF()));
@@ -104,43 +103,44 @@ public class DataStreamSerializer implements StreamSerializer {
 
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        int sizeListSection = dis.readInt();
-                        List<String> list = new ArrayList<>(sizeListSection);
 
-                        for (int j = 0; j < sizeListSection; j++) {
+                        List<String> list = new ArrayList<>();
+
+                        readWithException(dis, () -> {
                             list.add(dis.readUTF());
-                        }
+                        });
+
                         resume.addSection(sectionType, new ListSection(list));
                         break;
 
                     case EXPERIENCE:
                     case EDUCATION:
+
                         OrganizationSection organizationSection = new OrganizationSection();
+                        List<Organization> listOrganization = new ArrayList<>();
 
-                        int sizeListOrganization = dis.readInt();
-                        List<Organization> listOrganization = new ArrayList<>(sizeListOrganization);
-
-                        for (int j = 0; j < sizeListOrganization; j++) {
+                        readWithException(dis, () -> {
                             Organization organization = new Organization();
                             organization.setHomePage(new Link(dis.readUTF(), readNullElement(dis)));
 
-                            int sizePosition = dis.readInt();
-                            List<Organization.Position> listPosition = new ArrayList<>(sizePosition);
+                            List<Organization.Position> listPosition = new ArrayList<>();
 
-                            for (int k = 0; k < sizePosition; k++) {
+                            readWithException(dis, () -> {
                                 Organization.Position organizationPosition = new Organization.Position(readDate(dis),
                                         readDate(dis), dis.readUTF(), readNullElement(dis));
                                 listPosition.add(organizationPosition);
-                            }
+                            });
+
                             organization.setPositions(listPosition);
                             listOrganization.add(organization);
-                        }
+
+                        });
                         organizationSection.setOrganizations(listOrganization);
                         resume.addSection(sectionType, organizationSection);
                         break;
                 }
-            }
-            //конец реализации чтения секций (мой код)
+            });
+
             return resume;
         }
     }
@@ -175,12 +175,26 @@ public class DataStreamSerializer implements StreamSerializer {
         void write(T t) throws IOException;
     }
 
+    @FunctionalInterface
+    private interface ReadableElementOfCollection<T> {
+        void read() throws IOException;
+    }
+
     private <T> void writeWithException(Collection<T> collection, DataOutputStream dataOutputStream,
                                         WritableElementOfCollection<T> writable) throws IOException {
 
         dataOutputStream.writeInt(collection.size());
         for (T element : collection) {
             writable.write(element);
+        }
+    }
+
+    private <T> void readWithException(DataInputStream dataInputStream,
+                                       ReadableElementOfCollection<T> readable) throws IOException {
+
+        int size = dataInputStream.readInt();
+        for (int i = 0; i < size; i++) {
+            readable.read();
         }
     }
 }

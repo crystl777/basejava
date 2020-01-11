@@ -85,12 +85,11 @@ public class DataStreamSerializer implements StreamSerializer {
             Resume resume = new Resume(uuid, fullName);
 
             //реализация чтения контактов через функциональный интерфейс
-            readWithException(dis, () -> {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
-            });
+            readWithException(dis, () -> resume.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
 
 
             //реализация чтения секций через функциональный интерфейс
+
             readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
 
@@ -104,40 +103,18 @@ public class DataStreamSerializer implements StreamSerializer {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
 
-                        List<String> list = new ArrayList<>();
-
-                        readWithException(dis, () -> {
-                            list.add(dis.readUTF());
-                        });
-
-                        resume.addSection(sectionType, new ListSection(list));
+                        resume.addSection(sectionType, new ListSection(readList(dis, dis::readUTF)));
                         break;
 
                     case EXPERIENCE:
                     case EDUCATION:
 
-                        OrganizationSection organizationSection = new OrganizationSection();
-                        List<Organization> listOrganization = new ArrayList<>();
-
-                        readWithException(dis, () -> {
-                            Organization organization = new Organization();
-                            organization.setHomePage(new Link(dis.readUTF(), readNullElement(dis)));
-
-                            List<Organization.Position> listPosition = new ArrayList<>();
-
-                            readWithException(dis, () -> {
-                                Organization.Position organizationPosition = new Organization.Position(readDate(dis),
-                                        readDate(dis), dis.readUTF(), readNullElement(dis));
-                                listPosition.add(organizationPosition);
-                            });
-
-                            organization.setPositions(listPosition);
-                            listOrganization.add(organization);
-
-                        });
-                        organizationSection.setOrganizations(listOrganization);
-                        resume.addSection(sectionType, organizationSection);
+                        resume.addSection(sectionType, new OrganizationSection(readList(dis, () ->
+                                new Organization(new Link(dis.readUTF(), readNullElement(dis)), readList(dis, () ->
+                                        new Organization.Position(
+                                                readDate(dis), readDate(dis), dis.readUTF(), readNullElement(dis)))))));
                         break;
+
                 }
             });
 
@@ -176,7 +153,7 @@ public class DataStreamSerializer implements StreamSerializer {
     }
 
     @FunctionalInterface
-    private interface ReadableElementOfCollection<T> {
+    private interface ReadableElementOfCollection {
         void read() throws IOException;
     }
 
@@ -189,12 +166,29 @@ public class DataStreamSerializer implements StreamSerializer {
         }
     }
 
-    private <T> void readWithException(DataInputStream dataInputStream,
-                                       ReadableElementOfCollection<T> readable) throws IOException {
-
+    private void readWithException(DataInputStream dataInputStream,
+                                   ReadableElementOfCollection readable) throws IOException {
         int size = dataInputStream.readInt();
         for (int i = 0; i < size; i++) {
             readable.read();
         }
+    }
+
+    @FunctionalInterface
+    private interface ReadableList<T> {
+        T read() throws IOException;
+    }
+
+
+    private <T> List<T> readList(DataInputStream dataInputStream,
+                                 ReadableList<T> readable) throws IOException {
+
+        int sizeList = dataInputStream.readInt();
+        List<T> list = new ArrayList<>(sizeList);
+
+        for (int i = 0; i < sizeList; i++) {
+            list.add(readable.read());
+        }
+        return list;
     }
 }

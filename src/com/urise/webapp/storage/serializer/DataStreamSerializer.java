@@ -1,5 +1,6 @@
 package com.urise.webapp.storage.serializer;
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
@@ -92,30 +93,7 @@ public class DataStreamSerializer implements StreamSerializer {
 
             readWithException(dis, () -> {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
-
-                switch (sectionType) {
-
-                    case PERSONAL:
-                    case OBJECTIVE:
-                        resume.addSection(sectionType, new StringSection(dis.readUTF()));
-                        break;
-
-                    case ACHIEVEMENT:
-                    case QUALIFICATIONS:
-
-                        resume.addSection(sectionType, new ListSection(readList(dis, dis::readUTF)));
-                        break;
-
-                    case EXPERIENCE:
-                    case EDUCATION:
-
-                        resume.addSection(sectionType, new OrganizationSection(readList(dis, () ->
-                                new Organization(new Link(dis.readUTF(), readNullElement(dis)), readList(dis, () ->
-                                        new Organization.Position(
-                                                readDate(dis), readDate(dis), dis.readUTF(), readNullElement(dis)))))));
-                        break;
-
-                }
+                resume.addSection(sectionType, readSection(dis, sectionType));
             });
 
             return resume;
@@ -190,5 +168,24 @@ public class DataStreamSerializer implements StreamSerializer {
             list.add(readable.read());
         }
         return list;
+    }
+
+
+    private <T> AbstractSection readSection(DataInputStream dis, SectionType sectionType) throws IOException {
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                return new StringSection(dis.readUTF());
+            case ACHIEVEMENT:
+            case QUALIFICATIONS:
+                return new ListSection(readList(dis, dis::readUTF));
+            case EXPERIENCE:
+            case EDUCATION:
+                return new OrganizationSection(readList(dis, () ->
+                        new Organization(new Link(dis.readUTF(), dis.readUTF()), readList(dis, () ->
+                                new Organization.Position(readDate(dis), readDate(dis), dis.readUTF(), dis.readUTF())))));
+            default:
+                throw new StorageException("Error of reading " + sectionType.name(), sectionType.name());
+        }
     }
 }

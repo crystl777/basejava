@@ -19,6 +19,7 @@ public class DeadLock {
         Thread thread_one = new Thread() {
             public void run() {
                 synchronized (FIRST_ENTITY) {
+                    System.out.println("block entity 1");
                     Thread.yield();
                     synchronized (SECOND_ENTITY) {
                         System.out.println("Done");
@@ -30,6 +31,7 @@ public class DeadLock {
         Thread thread_two = new Thread() {
             public void run() {
                 synchronized (SECOND_ENTITY) {
+                    System.out.println("block entity 2");
                     Thread.yield();
                     synchronized (FIRST_ENTITY) {
                         System.out.println("Done");

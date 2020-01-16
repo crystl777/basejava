@@ -8,37 +8,46 @@ public class DeadLock {
     public static void main(String[] args) {
 
      /*
-     создаем один поток, внутри которого блокируем сначала первый объект (при вызове метода synchronized,
-     и вызываем метод yield, который заставляет sleep первый поток), а после пытаемся заблокировать второй объект
-     методом synchronized
+     первый поток захватывает первый объект, ждёт какое-то время и пытается захватить второй
+     второй поток захватывает второй объект, ждёт какое-то время и пытается захватить первый объект
 
-     во втором потоке всё тоже самое, только сначала блокируем второй объект и делаем  sleep потока,
-     а после пытаемся заблокировать первый объект.
+     без Thread.sleep мы не можем точно утверждать, что возникнет deadlock, так как остаётся шанс, что
+     пока Thread#1 блокирует первый объект и, после, второй объект, Thread#2 успеет заблокировать второй объект.
+
+     !!!  Thread.yield использовать в реализации deadlock нельзя. Так как по факту yield - это подсказка планировщику о
+     том, что данный поток готов предоставить свое текущее использование процессору, НО планировщик может игнорировать
+     данную подсказку.  !!!
       */
 
-        Thread thread_one = new Thread() {
-            public void run() {
-                synchronized (FIRST_ENTITY) {
-                    System.out.println("block entity 1");
-                    Thread.yield();
-                    synchronized (SECOND_ENTITY) {
-                        System.out.println("Done");
-                    }
+        Thread thread_one = new Thread(() -> {
+            synchronized (FIRST_ENTITY) {
+                System.out.println("block entity 1");
+                try {
+                    System.out.println("sleep thread 1");
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
-        };
-
-        Thread thread_two = new Thread() {
-            public void run() {
                 synchronized (SECOND_ENTITY) {
-                    System.out.println("block entity 2");
-                    Thread.yield();
-                    synchronized (FIRST_ENTITY) {
-                        System.out.println("Done");
-                    }
+                    System.out.println("Done thread 1");
                 }
             }
-        };
+        });
+
+        Thread thread_two = new Thread(() -> {
+            synchronized (SECOND_ENTITY) {
+                System.out.println("block entity 2");
+                try {
+                    System.out.println("sleep thread 2");
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (FIRST_ENTITY) {
+                    System.out.println("Done thread 2");
+                }
+            }
+        });
 
         thread_one.start();
         thread_two.start();

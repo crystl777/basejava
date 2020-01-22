@@ -3,6 +3,8 @@ package com.urise.webapp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainStream {
 
@@ -33,27 +35,14 @@ public class MainStream {
      */
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-
-        int sum = integers.stream().mapToInt(Integer::intValue).sum();
-
-        List<Integer> odd = new ArrayList<>();
-        List<Integer> even = new ArrayList<>();
-
-        if (sum % 2 > 0) {
-            for (int num : integers) {
-                if (num % 2 > 0) {
-                    odd.add(num);
-                }
-            }
-            return odd;
-        } else
-            for (int num : integers) {
-                if (num % 2 == 0) {
-                    even.add(num);
-                }
-
-            }
-        return even;
+        List<Integer> list = null;
+        Map<Boolean, List<Integer>> oddNum = integers.stream().collect(Collectors.groupingBy(x -> (x % 2) > 0));
+        for (Map.Entry<Boolean, List<Integer>> item : oddNum.entrySet()) {
+            if (item.getValue().size() % 2 > 0) {
+                list = oddNum.get(false);
+            } else list = oddNum.get(true);
+        }
+        return list;
     }
 
 
@@ -64,6 +53,7 @@ public class MainStream {
         integers.add(10);
         integers.add(3);
         integers.add(1);
+        integers.add(7);
         System.out.println(oddOrEven(integers));
 
     }

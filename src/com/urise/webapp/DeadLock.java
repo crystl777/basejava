@@ -18,38 +18,33 @@ public class DeadLock {
      том, что данный поток готов предоставить свое текущее использование процессору, НО планировщик может игнорировать
      данную подсказку.  !!!
       */
+     Thread thread_one = new Thread(() -> {
+         sync(FIRST_ENTITY, SECOND_ENTITY);
+     });
 
-        Thread thread_one = new Thread(() -> {
-            synchronized (FIRST_ENTITY) {
-                System.out.println("block entity 1");
-                try {
-                    System.out.println("sleep thread 1");
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                synchronized (SECOND_ENTITY) {
-                    System.out.println("Done thread 1");
-                }
-            }
-        });
-
-        Thread thread_two = new Thread(() -> {
-            synchronized (SECOND_ENTITY) {
-                System.out.println("block entity 2");
-                try {
-                    System.out.println("sleep thread 2");
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                synchronized (FIRST_ENTITY) {
-                    System.out.println("Done thread 2");
-                }
-            }
-        });
+     Thread thread_two = new Thread(() -> {
+         sync(SECOND_ENTITY, FIRST_ENTITY);
+     });
 
         thread_one.start();
         thread_two.start();
     }
+
+
+    private static void sync (Object first, Object second) {
+        synchronized (first) {
+            System.out.println("block " + first.toString());
+            try {
+                Thread.sleep(100);
+                System.out.println("sleep " + (Thread.currentThread().getName()));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            synchronized (second) {
+                System.out.println((Thread.currentThread().getName()) + " is done");
+            }
+        }
+    }
+
+
 }

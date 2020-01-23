@@ -17,7 +17,6 @@ public class MainStream {
     составленное из этих уникальных цифр. Не использовать преобразование в строку и обратно.
      */
     private static int minValue(int[] values) {
-
         int[] arr = Arrays.stream(values).distinct().sorted().toArray();
         int num = 0;
 
@@ -35,14 +34,8 @@ public class MainStream {
      */
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-        List<Integer> list = null;
-        Map<Boolean, List<Integer>> oddNum = integers.stream().collect(Collectors.groupingBy(x -> (x % 2) > 0));
-        for (Map.Entry<Boolean, List<Integer>> item : oddNum.entrySet()) {
-            if (item.getValue().size() % 2 > 0) {
-                list = oddNum.get(false);
-            } else list = oddNum.get(true);
-        }
-        return list;
+        Map<Boolean, List<Integer>> map = integers.stream().collect(Collectors.groupingBy(x -> (x % 2) > 0));
+        return map.get(map.get(true).size() % 2 == 0);
     }
 
 

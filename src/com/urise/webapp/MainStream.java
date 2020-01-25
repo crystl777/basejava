@@ -17,14 +17,7 @@ public class MainStream {
     составленное из этих уникальных цифр. Не использовать преобразование в строку и обратно.
      */
     private static int minValue(int[] values) {
-        int[] arr = Arrays.stream(values).distinct().sorted().toArray();
-        int num = 0;
-
-        for (int i = 0, n = arr.length - 1; n >= 0; i++, --n) {
-            int pos = (int) Math.pow(10, n);
-            num += arr[i] * pos;
-        }
-        return num;
+        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> x * 10 + y).orElse(0);
     }
 
 

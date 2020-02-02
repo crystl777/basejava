@@ -17,7 +17,11 @@ public class MainStream {
     составленное из этих уникальных цифр. Не использовать преобразование в строку и обратно.
      */
     private static int minValue(int[] values) {
-        return Arrays.stream(values).distinct().sorted().reduce((x, y) -> x * 10 + y).orElse(0);
+        return Arrays.stream(values)
+                .distinct()
+                .sorted()
+                .reduce((x, y) -> x * 10 + y)
+                .orElse(0);
     }
 
 
@@ -27,7 +31,9 @@ public class MainStream {
      */
 
     private static List<Integer> oddOrEven(List<Integer> integers) {
-        Map<Boolean, List<Integer>> map = integers.stream().collect(Collectors.groupingBy(x -> (x % 2) > 0));
+        Map<Boolean, List<Integer>> map = integers.stream()
+                .collect(Collectors
+                        .groupingBy(x -> (x % 2) > 0));
         return map.get(map.get(true).size() % 2 == 0);
     }
 

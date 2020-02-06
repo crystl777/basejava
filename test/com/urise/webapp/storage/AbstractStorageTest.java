@@ -1,7 +1,6 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.Config;
-import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
@@ -21,10 +20,11 @@ public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected Storage storage;
 
-    private static final String UUID_1 = "uuid1";
-    private static final String UUID_2 = "uuid2";
-    private static final String UUID_3 = "uuid3";
-    private static final String UUID_4 = "uuid4";
+    //uuid - минимум 36 знаков
+    private static final String UUID_1 = "uuid1                               ";
+    private static final String UUID_2 = "uuid2                               ";
+    private static final String UUID_3 = "uuid3                               ";
+    private static final String UUID_4 = "uuid4                               ";
 
 
     private static final Resume resume1 = new Resume(UUID_1, "Bob");
@@ -40,14 +40,23 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
+      /*
         ResumeTestData.addContactsResume(resume1);
         ResumeTestData.addSectionsResume(resume1);
+
+       */
         storage.save(resume1);
+        /*
         ResumeTestData.addContactsResume(resume2);
         ResumeTestData.addSectionsResume(resume2);
+
+         */
         storage.save(resume2);
+        /*
         ResumeTestData.addContactsResume(resume3);
         ResumeTestData.addSectionsResume(resume3);
+
+         */
         storage.save(resume3);
     }
 
@@ -79,8 +88,11 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume resume = new Resume(UUID_1, "Bob");
+        /*
         ResumeTestData.addContactsResume(resume1);
         ResumeTestData.addSectionsResume(resume1);
+
+         */
         storage.update(resume);
         Assert.assertEquals(resume, storage.get(UUID_1));
     }

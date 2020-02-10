@@ -16,8 +16,6 @@ public class Config {
     private final File STORAGE_DIR;
     private final Storage STORAGE;
 
-    private Properties props = new Properties();
-
 
     public static Config get() {
         return INSTANCE;
@@ -25,6 +23,7 @@ public class Config {
 
     private Config() {
         try (InputStream is = new FileInputStream(PROPS)) {
+            Properties props = new Properties();
             props.load(is);
             STORAGE_DIR = new File(props.getProperty("storage.dir"));
             STORAGE = new SqlStorage(props.getProperty("db.url"), props.getProperty("db.user"), props.getProperty("db.password"));

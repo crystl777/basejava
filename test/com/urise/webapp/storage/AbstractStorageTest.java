@@ -1,6 +1,7 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.Config;
+import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
@@ -40,23 +41,14 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
-      /*
         ResumeTestData.addContactsResume(resume1);
-        ResumeTestData.addSectionsResume(resume1);
-
-       */
+       // ResumeTestData.addSectionsResume(resume1);
         storage.save(resume1);
-        /*
         ResumeTestData.addContactsResume(resume2);
-        ResumeTestData.addSectionsResume(resume2);
-
-         */
+       // ResumeTestData.addSectionsResume(resume2);
         storage.save(resume2);
-        /*
         ResumeTestData.addContactsResume(resume3);
-        ResumeTestData.addSectionsResume(resume3);
-
-         */
+       // ResumeTestData.addSectionsResume(resume3);
         storage.save(resume3);
     }
 
@@ -87,14 +79,15 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume resume = new Resume(UUID_1, "Bob");
-        /*
-        ResumeTestData.addContactsResume(resume1);
-        ResumeTestData.addSectionsResume(resume1);
+        Resume newResume = new Resume(UUID_1, "New Name");
 
-         */
-        storage.update(resume);
-        Assert.assertEquals(resume, storage.get(UUID_1));
+        ResumeTestData.addContactsResume(newResume);
+     //   ResumeTestData.addSectionsResume(resume1);
+
+
+        storage.update(newResume);
+
+        Assert.assertEquals(newResume, storage.get(UUID_1));
     }
 
     @Test(expected = NotExistStorageException.class)

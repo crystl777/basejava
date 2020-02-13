@@ -41,14 +41,14 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
-        ResumeTestData.addContactsResume(resume1);
-       // ResumeTestData.addSectionsResume(resume1);
+        // ResumeTestData.addContactsResume(resume1);
+        // ResumeTestData.addSectionsResume(resume1);
         storage.save(resume1);
         ResumeTestData.addContactsResume(resume2);
-       // ResumeTestData.addSectionsResume(resume2);
+        // ResumeTestData.addSectionsResume(resume2);
         storage.save(resume2);
         ResumeTestData.addContactsResume(resume3);
-       // ResumeTestData.addSectionsResume(resume3);
+        // ResumeTestData.addSectionsResume(resume3);
         storage.save(resume3);
     }
 
@@ -80,13 +80,9 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID_1, "New Name");
-
-        ResumeTestData.addContactsResume(newResume);
-     //   ResumeTestData.addSectionsResume(resume1);
-
-
+       //  ResumeTestData.addContactsResume(newResume);
+        // ResumeTestData.addSectionsResume(resume1);
         storage.update(newResume);
-
         Assert.assertEquals(newResume, storage.get(UUID_1));
     }
 

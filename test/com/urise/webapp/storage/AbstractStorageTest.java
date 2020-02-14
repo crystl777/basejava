@@ -22,16 +22,16 @@ public abstract class AbstractStorageTest {
     protected Storage storage;
 
     //uuid - минимум 36 знаков
-    private static final String UUID_1 = "uuid1                               ";
-    private static final String UUID_2 = "uuid2                               ";
-    private static final String UUID_3 = "uuid3                               ";
-    private static final String UUID_4 = "uuid4                               ";
+    private static final String UUID_1 = "UUID_1                              ";
+    private static final String UUID_2 = "UUID_2                              ";
+    private static final String UUID_3 = "UUID_3                              ";
+    private static final String UUID_4 = "UUID_4                              ";
 
 
-    private static final Resume resume1 = new Resume(UUID_1, "Bob");
-    private static final Resume resume2 = new Resume(UUID_2, "James");
-    private static final Resume resume3 = new Resume(UUID_3, "Christopher");
-    private static final Resume resume4 = new Resume(UUID_4, "Jason");
+    private static final Resume resume1 = new Resume(UUID_1, "Name1");
+    private static final Resume resume2 = new Resume(UUID_2, "Name2");
+    private static final Resume resume3 = new Resume(UUID_3, "Name3");
+    private static final Resume resume4 = new Resume(UUID_4, "Name4");
 
 
     public AbstractStorageTest(Storage storage) {
@@ -41,15 +41,17 @@ public abstract class AbstractStorageTest {
     @Before
     public void setUp() throws Exception {
         storage.clear();
-        // ResumeTestData.addContactsResume(resume1);
-        // ResumeTestData.addSectionsResume(resume1);
         storage.save(resume1);
+        ResumeTestData.addContactsResume(resume1);
+        // ResumeTestData.addSectionsResume(resume1);
+
+        storage.save(resume2);
         ResumeTestData.addContactsResume(resume2);
         // ResumeTestData.addSectionsResume(resume2);
-        storage.save(resume2);
+
+        storage.save(resume3);
         ResumeTestData.addContactsResume(resume3);
         // ResumeTestData.addSectionsResume(resume3);
-        storage.save(resume3);
     }
 
     @Test
@@ -80,7 +82,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID_1, "New Name");
-       //  ResumeTestData.addContactsResume(newResume);
+        ResumeTestData.addContactsResume(newResume);
         // ResumeTestData.addSectionsResume(resume1);
         storage.update(newResume);
         Assert.assertEquals(newResume, storage.get(UUID_1));

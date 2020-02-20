@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ResumeServlet extends HttpServlet {
 
-    private Storage storage = Config.get().getSTORAGE();
+    private Storage storage = Config.get().getStorage();
 
     @Override
     public void init() {

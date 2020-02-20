@@ -16,7 +16,6 @@ public class Config {
     private final File STORAGE_DIR;
     private final Storage STORAGE;
 
-
     public static Config get() {
         return INSTANCE;
     }
@@ -37,7 +36,9 @@ public class Config {
         return STORAGE_DIR;
     }
 
-    public Storage getSTORAGE() {
+    public Storage getStorage() {
         return STORAGE;
     }
+
+
 }

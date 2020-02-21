@@ -23,7 +23,6 @@ public class SqlStorage implements Storage {
     @Override
     public void clear() {
         sqlHelper.execute("DELETE FROM resume");
-        sqlHelper.execute("DELETE FROM section");
     }
 
     @Override
@@ -52,8 +51,8 @@ public class SqlStorage implements Storage {
                     throw new NotExistStorageException(resume.getUuid());
                 }
             }
-            deleteContacts(conn, resume  );
-            deleteSection(conn, resume);
+            prepareStatementExecute(conn, resume, "DELETE  FROM contact WHERE resume_uuid=?");
+            prepareStatementExecute(conn, resume, "DELETE FROM section WHERE resume_uuid=?");
             addContact(conn, resume);
             addSection(conn, resume);
             return null;
@@ -172,10 +171,10 @@ public class SqlStorage implements Storage {
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
                         List<String> list = ((ListSection) e.getValue()).getListComponent();
-                        StringBuilder text = new StringBuilder();
+                        StringJoiner stringJoiner = new StringJoiner("\n");
                         for (String s : list) {
-                            text.append(s).append("\n");
-                            ps.setString(3, text.toString());
+                            stringJoiner.add(s);
+                            ps.setString(3, stringJoiner.toString());
                         }
                         break;
                 }
@@ -211,20 +210,11 @@ public class SqlStorage implements Storage {
         }
     }
 
-    private void deleteContacts(Connection conn, Resume resume) {
-        sqlHelper.execute("DELETE  FROM contact WHERE resume_uuid=?", ps -> {
+    private void prepareStatementExecute (Connection conn, Resume resume, String sql) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, resume.getUuid());
             ps.execute();
-            return null;
-        });
-    }
-
-    private void deleteSection(Connection conn, Resume resume) {
-        sqlHelper.execute("DELETE FROM section WHERE resume_uuid=?", ps -> {
-            ps.setString(1, resume.getUuid());
-            ps.execute();
-            return null;
-        });
+        }
     }
 }
 

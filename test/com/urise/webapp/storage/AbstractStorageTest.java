@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,13 +64,10 @@ public abstract class AbstractStorageTest {
     @Test
     public void getAllSorted() {
         List<Resume> list = storage.getAllSorted();
-        List<Resume> listWithSort = new ArrayList<>();
-        listWithSort.add(resume1);
-        listWithSort.add(resume2);
-        listWithSort.add(resume3);
-        Collections.sort(listWithSort);
         assertEquals(3, list.size());
-        assertEquals(listWithSort, list);
+        List<Resume> sortedResumes = Arrays.asList(resume1, resume2, resume3);
+        Collections.sort(sortedResumes);
+        assertEquals(sortedResumes, list);
     }
 
 

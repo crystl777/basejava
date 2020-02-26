@@ -1,11 +1,10 @@
 package com.urise.webapp;
 
-import com.urise.webapp.model.ListSection;
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.StringSection;
+import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
 import com.urise.webapp.model.type.SectionType;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class ResumeTestData {
         qualifications.add("the second qualification");
         qualifications.add("the third qualification");
         ListSection qualificationListSection = new ListSection(qualifications);
-        /*
+
         List<Organization.Position> listPositionExperience = new ArrayList<>();
         listPositionExperience.add(
                 new Organization.Position(LocalDate.of(1987, 9, 1),
@@ -64,15 +63,15 @@ public class ResumeTestData {
 
         OrganizationSection listExperience = new OrganizationSection(experienceComponents);
         OrganizationSection listEducation = new OrganizationSection(educationComponents);
-        */
+
         resume.getSections().put(SectionType.PERSONAL, personalStringSection);
         resume.getSections().put(SectionType.OBJECTIVE, objectiveStringSection);
         resume.getSections().put(SectionType.ACHIEVEMENT, achievementListSection);
         resume.getSections().put(SectionType.QUALIFICATIONS, qualificationListSection);
-        /*
+
         resume.getSections().put(SectionType.EXPERIENCE, listExperience);
         resume.getSections().put(SectionType.EDUCATION, listEducation);
-        */
+
     }
 }
 

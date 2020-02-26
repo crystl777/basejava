@@ -38,8 +38,6 @@ public class StringSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "StringSection{" +
-                "text='" + text + '\'' +
-                '}';
+        return  text;
     }
 }

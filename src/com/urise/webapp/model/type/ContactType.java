@@ -2,16 +2,17 @@ package com.urise.webapp.model.type;
 
 public enum ContactType {
     PHONE_NUMBER("Тел.: "),
+
     SKYPE("Skype: ") {
         @Override
         public String toHtml0(String value) {
-            return getTitle() + ": " + toLink("skype:" + value, value);
+            return getTitle() + toLink("skype:" + value, value);
         }
     },
     E_MAIL("Почта: ") {
         @Override
         public String toHtml0(String value) {
-            return getTitle() + ": " + toLink("mailto:" + value, value);
+            return getTitle() + toLink("mailto:" + value, value);
         }
     },
     LINKEDIN("Профиль LinkedIn: ") {

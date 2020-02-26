@@ -1,14 +1,19 @@
 package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.model.type.ContactType;
+import com.urise.webapp.model.type.SectionType;
 import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.DateUtil;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
 
@@ -40,12 +45,52 @@ public class ResumeServlet extends HttpServlet {
                 resume.getContacts().remove(type);
             }
         }
+
+        for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && value.trim().length() != 0) {
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        resume.addSection(type, new StringSection(value));
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        resume.addSection(type, new ListSection(Arrays.asList(value.split("\n"))));
+                        break;
+                    case EXPERIENCE:
+                    case EDUCATION:
+                        List<Organization> organizations = new ArrayList<>();
+                        List<Organization.Position> positions = new ArrayList<>();
+                        String[] orgNames = request.getParameterValues(type.name());
+                        String[] orgUrls = request.getParameterValues(type.name() + "url");
+                        for (int i = 0; i < orgNames.length; i++) {
+                            Link link = new Link(orgNames[i], orgUrls[i]);
+                            String[] startDates = request.getParameterValues(type.name() + "startDate" + i);
+                            String[] endDates = request.getParameterValues(type.name() + "endDate" + i);
+                            String[] titles = request.getParameterValues(type.name() + "title" + i);
+                            String[] descriptions = request.getParameterValues(type.name() + "description" + i);
+                            for (int j = 0; j < startDates.length; j++) {
+                                positions.add(new Organization.Position
+                                        (DateUtil.dateFormatter(startDates[i]),
+                                                DateUtil.dateFormatter(endDates[i]),
+                                                titles[i], descriptions[i]));
+                            }
+                            organizations.add(new Organization(link, positions));
+                        }
+                        resume.addSection(type, new OrganizationSection(organizations));
+                }
+            } else {
+                resume.getSections().remove(type);
+            }
+        }
         storage.update(resume);
         response.sendRedirect("resume");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws javax.servlet.ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String action = request.getParameter("action");
         if (action == null) {
@@ -53,7 +98,7 @@ public class ResumeServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
             return;
         }
-        Resume r;
+        Resume resume;
         switch (action) {
             case "delete":
                 storage.delete(uuid);
@@ -61,12 +106,12 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
             case "edit":
-                r = storage.get(uuid);
+                resume = storage.get(uuid);
                 break;
             default:
                 throw new IllegalStateException("Action " + action + " is illegal");
         }
-        request.setAttribute("resume", r);
+        request.setAttribute("resume", resume);
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);

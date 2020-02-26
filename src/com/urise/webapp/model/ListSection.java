@@ -36,10 +36,6 @@ public class ListSection extends AbstractSection {
 
     @Override
     public String toString() {
-        StringBuilder listComponentText = new StringBuilder("ListSection \"listComponent= \"");
-        for (String s : listComponent) {
-            listComponentText.append(" ").append(s).append(" ");
-        }
-        return listComponentText.toString();
+        return listComponent.toString();
     }
 }

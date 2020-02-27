@@ -46,12 +46,12 @@
                     <jsp:useBean id="organization"
                                  type="com.urise.webapp.model.Organization"/>
                     <a href="${organization.homePage.url}">${organization.homePage.name}</a><br/>
-                    <c:forEach var="period" items="<%=organization.getPositions()%>">
+                    <c:forEach var="position" items="<%=organization.getPositions()%>">
                         Период:<br/>
-                        Дата начала: ${period.startDate}<br/>
-                        Дата окончания: ${period.endDate}<br/>
-                        Должность: ${period.title}<br/>
-                        Описание: ${period.description}<br/><br/>
+                        Дата начала: ${position.startDate}<br/>
+                        Дата окончания: ${position.endDate}<br/>
+                        Должность: ${position.title}<br/>
+                        Описание: ${position.description}<br/><br/>
                     </c:forEach>
                 </c:forEach>
                 <br/><br/>

@@ -12,7 +12,13 @@ public class DateUtil {
         return LocalDate.of(year, month, 1);
     }
 
-    public static LocalDate dateFormatter (String date) {
-        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public static LocalDate dateFormatter(String date) {
+        return LocalDate.parse(date, formatter);
+    }
+
+    public static String dateToString(LocalDate date) {
+        return date.format(formatter);
     }
 }

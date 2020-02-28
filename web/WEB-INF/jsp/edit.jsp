@@ -2,8 +2,11 @@
 <%@ page import="com.urise.webapp.model.OrganizationSection" %>
 <%@ page import="com.urise.webapp.model.type.ContactType" %>
 <%@ page import="com.urise.webapp.model.type.SectionType" %>
+<<<<<<< HEAD
 <%@ page import="com.urise.webapp.model.Organization" %>
 <%@ page import="com.urise.webapp.util.DateUtil" %>
+=======
+>>>>>>> parent of a887a03... HW16.4 :
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -33,7 +36,7 @@
         <c:forEach var="type" items="<%=SectionType.values()%>">
             <c:set var="section" value="${resume.getSection(type)}"/>
             <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSection"/>
-            <b>${type.title}:</b><br/><br>
+            <b>${type.title}:</b><br/>
             <c:choose>
                 <c:when test="${type=='PERSONAL' || type=='OBJECTIVE'}">
                     <input type="text" name="${type.name()}" size=30 value="<%=section%>"><br/><br/>
@@ -42,6 +45,7 @@
                     <textarea name="${type.name()}" rows="5"
                               cols="100"><%=String.join("\n", ((ListSection) section).getListComponent())%></textarea><br/><br/>
                 </c:when>
+<<<<<<< HEAD
                 <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
                     <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>"
                                varStatus="count">
@@ -67,6 +71,8 @@
                         </c:forEach>
                     </c:forEach>
                 </c:when>
+=======
+>>>>>>> parent of a887a03... HW16.4 :
             </c:choose>
         </c:forEach>
         <hr>

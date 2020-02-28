@@ -18,7 +18,7 @@ public class ListSection extends AbstractSection {
     }
 
     public ListSection(String... elements) {
-        this(Arrays.asList(elements));
+       this(Arrays.asList(elements));
     }
 
     public List<String> getListComponent() {

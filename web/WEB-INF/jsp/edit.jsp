@@ -1,9 +1,9 @@
 <%@ page import="com.urise.webapp.model.ListSection" %>
-<%@ page import="com.urise.webapp.model.OrganizationSection"%>
+<%@ page import="com.urise.webapp.model.OrganizationSection" %>
 <%@ page import="com.urise.webapp.model.type.ContactType" %>
 <%@ page import="com.urise.webapp.model.type.SectionType" %>
-<%@ page import="com.urise.webapp.model.Organization"%>
-<%@ page import="com.urise.webapp.util.DateUtil"%>
+<%@ page import="com.urise.webapp.model.Organization" %>
+<%@ page import="com.urise.webapp.util.DateUtil" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
@@ -43,7 +43,8 @@
                               cols="100"><%=String.join("\n", ((ListSection) section).getListComponent())%></textarea><br/><br/>
                 </c:when>
                 <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                    <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>" varStatus="count">
+                    <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>"
+                               varStatus="count">
                         Организация:<br>
                         <input type="text" name="${type}" size="30" value="${organization.homePage.name}"/><br>
                         Домашняя страницы:<br>
@@ -52,13 +53,17 @@
                         <c:forEach var="position" items="${organization.positions}">
                             <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
                             Дата начала:<br>
-                            <input type="text" name="${type}startDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getStartDate())%>"/><br>
+                            <input type="text" name="${type}startDate${count.index}" size="30"
+                                   value="<%=DateUtil.dateToString(position.getStartDate())%>"/><br>
                             Дата окончания:<br>
-                            <input type="text" name="${type}endDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br>
+                            <input type="text" name="${type}endDate${count.index}" size="30"
+                                   value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br>
                             Позиция:<br>
-                            <input type="text" name="${type}title${count.index}" size="30" value="${position.title}"/><br>
+                            <input type="text" name="${type}title${count.index}" size="30"
+                                   value="${position.title}"/><br>
                             Описание:<br>
-                            <input type="text" name="${type}description${count.index}" size="30" value="${position.description}"/><br><br>
+                            <input type="text" name="${type}description${count.index}" size="30"
+                                   value="${position.description}"/><br><br>
                         </c:forEach>
                     </c:forEach>
                 </c:when>

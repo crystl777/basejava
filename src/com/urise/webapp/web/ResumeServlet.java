@@ -29,7 +29,6 @@ public class ResumeServlet extends HttpServlet {
         }
     }
 
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws javax.servlet.ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
@@ -135,8 +134,6 @@ public class ResumeServlet extends HttpServlet {
                         case EXPERIENCE:
                             if (section == null) {
                                 section = new OrganizationSection(new Organization("", "", new Organization.Position()));
-                            } else {
-                                ((OrganizationSection)section).getOrganizations().add(new Organization("", "", new Organization.Position()));
                             }
                             break;
                     }

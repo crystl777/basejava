@@ -23,6 +23,7 @@ public class Organization implements Serializable {
 
     public Organization(String name, String url, Position... positions) {
         this(new Link(name, url), Arrays.asList(positions));
+
     }
 
     public Organization(Link homePage, List<Position> positions) {

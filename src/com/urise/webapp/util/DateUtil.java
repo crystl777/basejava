@@ -12,7 +12,6 @@ public class DateUtil {
         return LocalDate.of(year, month, 1);
     }
 
-<<<<<<< HEAD
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static LocalDate dateFormatter(String date) {
@@ -28,9 +27,5 @@ public class DateUtil {
             return "";
         }
         return date.format(formatter);
-=======
-    public static LocalDate dateFormatter (String date) {
-        return LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
->>>>>>> parent of a887a03... HW16.4 :
     }
 }

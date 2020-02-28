@@ -14,8 +14,10 @@
     <h2 align="center">Добавить резюме<br/>
         <a href="resume?action=add"><img src="img/add.png" width="30" height="30" alt="add"></a><br/><br/></h2>
 
-
     <table align="center" border="1" cellpadding="8" cellspacing="0">
+
+    <table border="1" cellpadding="8" cellspacing="0">
+
         <tr>
             <th>Имя</th>
             <th>Email</th>
@@ -33,6 +35,9 @@
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30"
                                                                                          height="30" alt="edit"></a>
                 </td>
+
+                <td align="center"><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png" width="30" height="30" alt="delete"></a></td>
+                <td align="center"><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30" height="30" alt="edit"></a></td>
             </tr>
         </c:forEach>
     </table>

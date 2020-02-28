@@ -18,6 +18,7 @@ public class DateUtil {
         if (date == null) {
             return NOW;
         }
+
         return LocalDate.parse(date, formatter);
     }
 

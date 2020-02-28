@@ -34,8 +34,14 @@ public class ResumeServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume resume = storage.get(uuid);
-        resume.setFullName(fullName);
+
+        Resume resume;
+
+        if (uuid.length() != 0) {
+            resume = storage.get(uuid);
+            resume.setFullName(fullName);
+        } else resume = new Resume(fullName);
+
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
@@ -83,7 +89,10 @@ public class ResumeServlet extends HttpServlet {
                 resume.getSections().remove(type);
             }
         }
-        storage.update(resume);
+
+        if (uuid.length() == 0) {
+            storage.save(resume);
+        } else storage.update(resume);
         response.sendRedirect("resume");
     }
 

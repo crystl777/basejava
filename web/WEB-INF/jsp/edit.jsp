@@ -2,13 +2,10 @@
 <%@ page import="com.urise.webapp.model.OrganizationSection" %>
 <%@ page import="com.urise.webapp.model.type.ContactType" %>
 <%@ page import="com.urise.webapp.model.type.SectionType" %>
-<<<<<<< HEAD
-<%@ page import="com.urise.webapp.model.Organization" %>
 <%@ page import="com.urise.webapp.util.DateUtil" %>
-=======
->>>>>>> parent of a887a03... HW16.4 :
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -45,7 +42,6 @@
                     <textarea name="${type.name()}" rows="5"
                               cols="100"><%=String.join("\n", ((ListSection) section).getListComponent())%></textarea><br/><br/>
                 </c:when>
-<<<<<<< HEAD
                 <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
                     <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>"
                                varStatus="count">
@@ -71,8 +67,6 @@
                         </c:forEach>
                     </c:forEach>
                 </c:when>
-=======
->>>>>>> parent of a887a03... HW16.4 :
             </c:choose>
         </c:forEach>
         <hr>

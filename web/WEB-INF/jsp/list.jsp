@@ -1,6 +1,5 @@
 <%@ page import="com.urise.webapp.model.type.ContactType" %>
-<
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
@@ -35,7 +34,6 @@
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30"
                                                                                          height="30" alt="edit"></a>
                 </td>
-
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png" width="30" height="30" alt="delete"></a></td>
                 <td align="center"><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30" height="30" alt="edit"></a></td>
             </tr>

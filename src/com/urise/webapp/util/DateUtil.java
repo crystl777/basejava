@@ -15,10 +15,14 @@ public class DateUtil {
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static LocalDate dateFormatter(String date) {
-        return LocalDate.parse(date, formatter);
+        if (date.length() == 0) {
+            return LocalDate.parse("", formatter);
+        } else return LocalDate.parse(date, formatter);
     }
 
     public static String dateToString(LocalDate date) {
-        return date.format(formatter);
+        if (date == null) {
+            return "";
+        } else return date.format(formatter);
     }
 }

@@ -116,6 +116,53 @@ public class ResumeServlet extends HttpServlet {
             case "view":
             case "edit":
                 resume = storage.get(uuid);
+                for (SectionType type : SectionType.values()) {
+                    AbstractSection section = resume.getSection(type);
+                    switch (type) {
+                        case PERSONAL:
+                        case OBJECTIVE:
+                            if (section == null) {
+                                section = new StringSection("");
+                            }
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            if (section == null) {
+                                section = new ListSection("");
+                            }
+                            break;
+                        case EDUCATION:
+                        case EXPERIENCE:
+                            if (section == null) {
+                                section = new OrganizationSection(new Organization("", "", new Organization.Position()));
+                            } else {
+                                ((OrganizationSection)section).getOrganizations().add(new Organization("", "", new Organization.Position()));
+                            }
+                            break;
+                    }
+                    resume.addSection(type, section);
+                }
+                break;
+            case "add":
+                resume = new Resume();
+                for (SectionType type : SectionType.values()) {
+                    AbstractSection section = resume.getSection(type);
+                    switch (type) {
+                        case PERSONAL:
+                        case OBJECTIVE:
+                            section = new StringSection("");
+                            break;
+                        case ACHIEVEMENT:
+                        case QUALIFICATIONS:
+                            section = new ListSection("");
+                            break;
+                        case EDUCATION:
+                        case EXPERIENCE:
+                            section = new OrganizationSection(new Organization("", "", new Organization.Position()));
+                            break;
+                    }
+                    resume.addSection(type, section);
+                }
                 break;
             default:
                 throw new IllegalStateException("Action " + action + " is illegal");

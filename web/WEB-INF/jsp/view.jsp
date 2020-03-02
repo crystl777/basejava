@@ -13,16 +13,15 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
-    <h2>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30"
-                                                                                      height="30" alt="edit"></a></h2>
+    <h1>${resume.fullName}&nbsp;<a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/edit.png" width="30" height="30" alt="edit"></a></h1>
+    <hr>
     <p>
         <c:forEach var="contactEntry" items="${resume.contacts}">
             <jsp:useBean id="contactEntry"
                          type="java.util.Map.Entry<com.urise.webapp.model.type.ContactType, java.lang.String>"/>
-                <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br/>
+            <%=contactEntry.getKey().toHtml(contactEntry.getValue())%><br>
         </c:forEach>
     </p>
-    <br/>
     <c:forEach var="sectionEntry" items="${resume.sections}">
         <jsp:useBean id="sectionEntry"
                      type="java.util.Map.Entry<com.urise.webapp.model.type.SectionType, com.urise.webapp.model.AbstractSection>"/>
@@ -30,31 +29,31 @@
         <c:set var="section" value="${sectionEntry.value}"/>
         <jsp:useBean id="section"
                      type="com.urise.webapp.model.AbstractSection"/>
-        <b><c:out value="${type.title}"/></b><br/>
+        <hr>
+        <h2><c:out value="${type.title}"/></h2>
         <c:choose>
             <c:when test="${type=='PERSONAL' || type=='OBJECTIVE'}">
-                <%=((StringSection)section).getText()%><br/><br/>
+                <br><%=((StringSection)section).getText()%>
             </c:when>
             <c:when test="${type=='ACHIEVEMENT' || type=='QUALIFICATIONS'}">
                 <c:forEach var="element" items="<%=((ListSection)section).getListComponent()%>">
-                    ${element}<br/>
+                    <br>- ${element}
                 </c:forEach>
-                <br/><br/>
             </c:when>
             <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
                 <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>">
                     <jsp:useBean id="organization"
                                  type="com.urise.webapp.model.Organization"/>
-                    <a href="${organization.homePage.url}">${organization.homePage.name}</a><br/>
-                    <c:forEach var="period" items="<%=organization.getPositions()%>">
-                        Период:<br/>
-                        Дата начала: ${period.startDate}<br/>
-                        Дата окончания: ${period.endDate}<br/>
-                        Должность: ${period.title}<br/>
-                        Описание: ${period.description}<br/><br/>
+                    <br><h3>${organization.homePage.name}</h3>
+                    <a href="${organization.homePage.url}">Сайт</a>
+                    <br><p>Периоды работы:</p>
+                    <c:forEach var="position" items="<%=organization.getPositions()%>">
+                        <b>Дата начала:</b> ${position.startDate}<br>
+                        <b>Дата окончания:</b> ${position.endDate}<br>
+                        <b>Должность:</b> ${position.title}<br>
+                        <b>Описание:</b> ${position.description}<br>
                     </c:forEach>
                 </c:forEach>
-                <br/><br/>
             </c:when>
         </c:choose>
     </c:forEach>
@@ -62,4 +61,3 @@
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
-

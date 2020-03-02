@@ -18,52 +18,46 @@
 <section>
     <form method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
+        <h1>Имя:</h1>
         <dl>
-            <dt><b>Имя:</b></dt>
-            <dd><input type="text" name="fullName" size=50 value="${resume.fullName}"></dd>
+            <input type="text" name="fullName" size=50 value="${resume.fullName}">
         </dl>
-        <h3>Контакты:</h3>
+        <h2>Контакты:</h2>
         <c:forEach var="type" items="<%=ContactType.values()%>">
             <dl>
                 <dt>${type.title}</dt>
                 <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
             </dl>
         </c:forEach>
-        <h3>Секции:</h3>
+        <h2>Секции:</h2>
         <c:forEach var="type" items="<%=SectionType.values()%>">
             <c:set var="section" value="${resume.getSection(type)}"/>
             <jsp:useBean id="section" type="com.urise.webapp.model.AbstractSection"/>
-            <b>${type.title}:</b><br/>
+            <h3>${type.title}:</h3><br>
             <c:choose>
                 <c:when test="${type=='PERSONAL' || type=='OBJECTIVE'}">
-                    <input type="text" name="${type.name()}" size=30 value="<%=section%>"><br/><br/>
+                    <input type="text" name="${type}" size=30 value="<%=section%>"><br><br>
                 </c:when>
                 <c:when test="${type=='ACHIEVEMENT' || type=='QUALIFICATIONS'}">
-                    <textarea name="${type.name()}" rows="5"
-                              cols="100"><%=String.join("\n", ((ListSection) section).getListComponent())%></textarea><br/><br/>
+                    <textarea name="${type}" rows="5" cols="100"><%=String.join("\n", ((ListSection)section).getListComponent())%></textarea><br><br>
                 </c:when>
                 <c:when test="${type=='EXPERIENCE' || type=='EDUCATION'}">
-                    <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>"
-                               varStatus="count">
+                    <c:forEach var="organization" items="<%=((OrganizationSection)section).getOrganizations()%>" varStatus="count">
                         Организация:<br>
                         <input type="text" name="${type}" size="30" value="${organization.homePage.name}"/><br>
                         Домашняя страницы:<br>
                         <input type="text" name="${type}url" size="30" value="${organization.homePage.url}"/><br>
-                        Периоды работы<br>
+
                         <c:forEach var="position" items="${organization.positions}">
                             <jsp:useBean id="position" type="com.urise.webapp.model.Organization.Position"/>
                             Дата начала:<br>
-                            <input type="text" name="${type}startDate${count.index}" size="30"
-                                   value="<%=DateUtil.dateToString(position.getStartDate())%>"/><br>
+                            <input type="text" name="${type}startDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getStartDate())%>"/><br>
                             Дата окончания:<br>
-                            <input type="text" name="${type}endDate${count.index}" size="30"
-                                   value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br>
+                            <input type="text" name="${type}endDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br><br>
                             Позиция:<br>
-                            <input type="text" name="${type}title${count.index}" size="30"
-                                   value="${position.title}"/><br>
+                            <input type="text" name="${type}title${count.index}" size="30" value="${position.title}"/><br>
                             Описание:<br>
-                            <input type="text" name="${type}description${count.index}" size="30"
-                                   value="${position.description}"/><br><br>
+                            <input type="text" name="${type}description${count.index}" size="30" value="${position.description}"/><br><br><br>
                         </c:forEach>
                     </c:forEach>
                 </c:when>
@@ -71,7 +65,7 @@
         </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
-        <button onclick="window.history.back()">Отменить</button>
+        <button type="button" onclick="window.history.back()">Отменить</button>
     </form>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

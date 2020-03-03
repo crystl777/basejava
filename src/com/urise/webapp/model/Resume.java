@@ -24,6 +24,17 @@ public class Resume implements Comparable<Resume>, Serializable {
     private String fullName;
     private String uuid;  // Unique identifier
 
+    public static final Resume EMPTY = new Resume();
+
+    static {
+        EMPTY.addSection(SectionType.OBJECTIVE, StringSection.EMPTY);
+        EMPTY.addSection(SectionType.PERSONAL, StringSection.EMPTY);
+        EMPTY.addSection(SectionType.ACHIEVEMENT, ListSection.EMPTY);
+        EMPTY.addSection(SectionType.QUALIFICATIONS, ListSection.EMPTY);
+        EMPTY.addSection(SectionType.EXPERIENCE, new OrganizationSection(Organization.EMPTY));
+        EMPTY.addSection(SectionType.EDUCATION, new OrganizationSection(Organization.EMPTY));
+    }
+
     private  Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
     private  Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 

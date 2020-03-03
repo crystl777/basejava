@@ -9,6 +9,8 @@ public class ListSection extends AbstractSection {
     private static final long serialVersionUID = -5509188542918453567L;
     private List<String> listComponent;
 
+    public static final ListSection EMPTY = new ListSection("");
+
     public ListSection() {
     }
 

@@ -7,6 +7,8 @@ public class StringSection extends AbstractSection {
     private static final long serialVersionUID = 8006681996951573264L;
     private String text;
 
+    public static final StringSection EMPTY = new StringSection("");
+
     public StringSection() {
     }
 

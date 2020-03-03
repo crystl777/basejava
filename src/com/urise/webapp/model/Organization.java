@@ -18,6 +18,8 @@ public class Organization implements Serializable {
     private Link homePage;
     private List<Position> positions;
 
+    public static final Organization EMPTY = new Organization("", "", Position.EMPTY);
+
     public Organization() {
     }
 
@@ -74,6 +76,8 @@ public class Organization implements Serializable {
         private LocalDate dateEnd;
         private String title;
         private String description;
+
+        public static final Position EMPTY = new Position();
 
         public Position() {
         }

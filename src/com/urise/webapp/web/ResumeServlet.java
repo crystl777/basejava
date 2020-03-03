@@ -37,10 +37,13 @@ public class ResumeServlet extends HttpServlet {
         final boolean isCreate = (uuid == null || uuid.length() == 0);
 
         Resume resume;
+
         if (isCreate) {
+            resume = new Resume(fullName);
+        } else {
             resume = storage.get(uuid);
             resume.setFullName(fullName);
-        } else resume = new Resume(fullName);
+        }
 
 
         for (ContactType type : ContactType.values()) {

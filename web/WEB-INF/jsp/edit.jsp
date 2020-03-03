@@ -53,7 +53,7 @@
                             Дата начала:<br>
                             <input type="text" name="${type}startDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getStartDate())%>"/><br>
                             Дата окончания:<br>
-                            <input type="text" name="${type}endDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br><br>
+                            <input type="text" name="${type}endDate${count.index}" size="30" value="<%=DateUtil.dateToString(position.getEndDate())%>"/><br>
                             Позиция:<br>
                             <input type="text" name="${type}title${count.index}" size="30" value="${position.title}"/><br>
                             Описание:<br>
